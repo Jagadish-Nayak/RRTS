@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { 
@@ -14,10 +14,8 @@ import {
   FaPhone, 
   FaMapMarkerAlt 
 } from 'react-icons/fa';
-import { useRouter } from 'next/navigation';
 
 export default function Signup() {
-  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
