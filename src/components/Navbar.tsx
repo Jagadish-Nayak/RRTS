@@ -112,9 +112,11 @@ const Navbar = ({ activeSection }: NavbarProps) => {
 
           {/* Login Button */}
           <div className="hidden md:block">
-            <button className="bg-[#00ABE4] text-white px-6 py-2 rounded-md hover:bg-opacity-90 hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 text-lg font-medium">
-              Login
-            </button>
+            <Link href="/login">
+              <button className="bg-[#00ABE4] text-white px-6 py-2 rounded-md hover:bg-opacity-90 hover:shadow-lg cursor-pointer transform hover:-translate-y-0.5 transition-all duration-300 text-lg font-medium">
+                Login
+              </button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -170,9 +172,11 @@ const Navbar = ({ activeSection }: NavbarProps) => {
                   {item.charAt(0).toUpperCase() + item.slice(1)}
                 </a>
               ))}
-              <button className="bg-[#00ABE4] text-white px-6 py-2 rounded-md hover:bg-opacity-90 transition-colors duration-300 text-lg font-medium mt-2">
-                Login
-              </button>
+              <Link href="/login">
+                <button className="bg-[#00ABE4] text-white px-6 py-2 rounded-md hover:bg-opacity-90 transition-colors duration-300 cursor-pointer text-lg font-medium mt-2">
+                  Login
+                </button>
+              </Link>
             </div>
           </div>
         )}

@@ -295,7 +295,7 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold mb-3 group-hover:text-white transition-colors duration-300">Road Assessment</h3>
+              <h3 className="text-xl text-gray-400 font-bold mb-3 group-hover:text-white transition-colors duration-300">Road Assessment</h3>
               <p className="text-gray-600 mb-4 group-hover:text-white transition-colors duration-300">
                 Comprehensive evaluation of road conditions using advanced technology to identify damage, wear patterns, and structural issues requiring attention.
               </p>
@@ -309,7 +309,7 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold mb-3 group-hover:text-white transition-colors duration-300">Digital Tracking</h3>
+              <h3 className="text-xl text-gray-400 font-bold mb-3 group-hover:text-white transition-colors duration-300">Digital Tracking</h3>
               <p className="text-gray-600 mb-4 group-hover:text-white transition-colors duration-300">
                 Real-time monitoring system that tracks repair progress, resource allocation, and project timelines for efficient management of road maintenance.
               </p>
@@ -324,7 +324,7 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold mb-3 group-hover:text-white transition-colors duration-300">Documentation</h3>
+              <h3 className="text-xl text-gray-400 font-bold mb-3 group-hover:text-white transition-colors duration-300 ">Documentation</h3>
               <p className="text-gray-600 mb-4 group-hover:text-white transition-colors duration-300">
                 Detailed photographic and written documentation of road conditions before, during, and after repairs for quality assurance and future reference.
               </p>
@@ -338,7 +338,7 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold mb-3 group-hover:text-white transition-colors duration-300">User Experience</h3>
+              <h3 className="text-xl text-gray-400 font-bold mb-3 group-hover:text-white transition-colors duration-300">User Experience</h3>
               <p className="text-gray-600 mb-4 group-hover:text-white transition-colors duration-300">
                 Intuitive interfaces for municipal staff and contractors to report issues, update progress, and access critical information about road repair projects.
               </p>
@@ -352,7 +352,7 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold mb-3 group-hover:text-white transition-colors duration-300">Clean Code</h3>
+              <h3 className="text-xl text-gray-400 font-bold mb-3 group-hover:text-white transition-colors duration-300">Clean Code</h3>
               <p className="text-gray-600 mb-4 group-hover:text-white transition-colors duration-300">
                 Well-structured, maintainable software architecture ensuring reliable performance of the road repair tracking system with minimal downtime.
               </p>
@@ -366,7 +366,7 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold mb-3 group-hover:text-white transition-colors duration-300">Fast Support</h3>
+              <h3 className="text-xl text-gray-400  font-bold mb-3 group-hover:text-white transition-colors duration-300">Fast Support</h3>
               <p className="text-gray-600 mb-4 group-hover:text-white transition-colors duration-300">
                 24/7 technical assistance and customer support for municipalities and contractors using our road repair tracking platform to resolve issues promptly.
               </p>
@@ -475,7 +475,7 @@ export default function Home() {
                 <button
                   type="submit"
                   className="px-8 py-3 rounded-md bg-[#00ABE4] text-white font-medium hover:shadow-lg
-                  hover:bg-[#00ABE0] transition-all duration-300"
+                  hover:bg-[#00ABE0] transition-all duration-300 cursor-pointer"
                 >
                   Submit
                 </button>
