@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="500" height="300" viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="500" height="300" fill="#E9F1FA"/>
+  
+  <!-- Road -->
+  <rect x="50" y="100" width="400" height="100" fill="#333333"/>
+  
+  <!-- Road markings -->
+  <rect x="70" y="145" width="60" height="10" fill="#FFFFFF"/>
+  <rect x="170" y="145" width="60" height="10" fill="#FFFFFF"/>
+  <rect x="270" y="145" width="60" height="10" fill="#FFFFFF"/>
+  <rect x="370" y="145" width="60" height="10" fill="#FFFFFF"/>
+  
+  <!-- Construction cones -->
+  <polygon points="120,90 130,90 125,60" fill="#FF6600"/>
+  <rect x="120" y="90" width="10" height="10" fill="#FF6600"/>
+  <rect x="117" y="100" width="16" height="5" fill="#FFFFFF"/>
+  <rect x="117" y="110" width="16" height="5" fill="#FFFFFF"/>
+  
+  <polygon points="150,90 160,90 155,60" fill="#FF6600"/>
+  <rect x="150" y="90" width="10" height="10" fill="#FF6600"/>
+  <rect x="147" y="100" width="16" height="5" fill="#FFFFFF"/>
+  <rect x="147" y="110" width="16" height="5" fill="#FFFFFF"/>
+  
+  <!-- Construction worker -->
+  <circle cx="200" cy="80" r="15" fill="#FFD700"/>
+  <rect x="195" y="95" width="10" height="20" fill="#00ABE4"/>
+  <rect x="190" y="115" width="20" height="15" fill="#00ABE4"/>
+  <line x1="195" y1="105" x2="185" y2="120" stroke="#00ABE4" stroke-width="3"/>
+  <line x1="205" y1="105" x2="215" y2="120" stroke="#00ABE4" stroke-width="3"/>
+  
+  <!-- Construction equipment -->
+  <rect x="300" y="70" width="100" height="30" fill="#FFD700"/>
+  <rect x="320" y="50" width="20" height="20" fill="#FFD700"/>
+  <rect x="310" y="100" width="80" height="20" fill="#333333"/>
+  <circle cx="320" cy="120" r="10" fill="#333333"/>
+  <circle cx="380" cy="120" r="10" fill="#333333"/>
+  
+  <!-- Road repair text -->
+  <text x="250" y="220" font-family="Arial" font-size="16" text-anchor="middle" fill="#00ABE4" font-weight="bold">ROAD REPAIR IN PROGRESS</text>
+</svg>
