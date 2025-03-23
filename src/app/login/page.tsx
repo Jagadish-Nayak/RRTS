@@ -3,6 +3,9 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
+import toast from 'react-hot-toast';
 import { FaEye, FaEyeSlash, FaUser } from 'react-icons/fa';
 
 export default function Login() {
@@ -18,6 +21,7 @@ export default function Login() {
     password: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   // Toggle password visibility
   const togglePasswordVisibility = () => {
@@ -50,22 +54,16 @@ export default function Login() {
     
     // Validate identifier (ID or phone)
     if (!formData.identifier.trim()) {
-      newErrors.identifier = 'ID or Phone number is required';
+      newErrors.identifier = 'Username or Employee ID is required';
       valid = false;
-    } else if (/^\d+$/.test(formData.identifier)) {
-      // If it's a phone number, check length
-      if (formData.identifier.length < 10) {
-        newErrors.identifier = 'Phone number must be at least 10 digits';
-        valid = false;
-      }
     }
     
     // Validate password
     if (!formData.password) {
       newErrors.password = 'Password is required';
       valid = false;
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters';
       valid = false;
     }
     
@@ -74,41 +72,65 @@ export default function Login() {
   };
 
   // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (validateForm()) {
       setIsSubmitting(true);
       
-      // Log form data to console
-      console.log('Form submitted with data:', formData);
-      setFormData({
-        identifier: '',
-        role: 'user',
-        password: '',
-        rememberMe: false
-      });
-      // Simulate API call
-      setTimeout(() => {
+      try {
+        const response = await axios.post('/api/auth/login', formData);
+        
+        if (response.data.success) {
+          // Store user data in localStorage
+          localStorage.setItem('user', JSON.stringify(response.data.user));
+          localStorage.setItem('token', response.data.token);
+          
+          // Show success toast
+          toast.success(`Welcome, ${response.data.user.username || 'User'}!`);
+          
+          // Reset form
+          setFormData({
+            identifier: '',
+            role: 'user',
+            password: '',
+            rememberMe: false
+          });
+          
+          // Redirect based on role
+          router.push(`/${response.data.user.role}`);
+        }
+      } catch (error: unknown) {
+        console.error('Login error:', error);
+      
+        let errorMessage = 'Something went wrong. Please try again.';
+      
+        // Type guard to check if error is an Axios error
+        if (axios.isAxiosError(error) && error.response?.data?.message) {
+          errorMessage = error.response.data.message;
+        }
+      
+        toast.error(errorMessage);
+      }
+       finally {
         setIsSubmitting(false);
-        // Redirect or show success message
-      }, 1500);
+      }
     }
   };
 
   return (
-    <div className="min-h-screen  text-gray-700 flex flex-col md:flex-row">
+    <div className="min-h-screen text-gray-700 flex flex-col md:flex-row">
       {/* Left side - Illustration (hidden on mobile) */}
-      <div className="hidden md:flex md:w-1/2 bg-[#00ABE4] items-center justify-center">
+      <div className="hidden md:flex md:w-1/2 bg-[#89CFF3] items-center justify-center">
         <div className="p-12 max-w-md">
           <h1 className="text-4xl font-bold text-white mb-6">Welcome to NEXTGEN</h1>
           <p className="text-white text-lg mb-8">
             Your trusted partner for road repair tracking and management solutions.
           </p>
-          <div className="relative h-64 w-full">
+          <div className="relative min-h-96 w-full">
             <Image 
-              src="/illustrations/road-repair-1.svg" 
-              alt="Road Repair Illustration" 
+              src="/login.svg" 
+              alt="Login Illustration" 
               fill
               className="object-contain"
             />
@@ -139,7 +161,7 @@ export default function Login() {
             {/* ID/Phone Field */}
             <div className="mb-6">
               <label htmlFor="identifier" className="block text-gray-700 font-medium mb-2">
-                Employee ID / Phone Number <span className="text-red-500">*</span>
+                Username / Employee ID <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -170,11 +192,12 @@ export default function Login() {
                 name="role"
                 value={formData.role}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-400 rounded-md focus:outline-none focus:ring-2  focus:ring-[#00ABE4]"
+                className="w-full px-4 py-3 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00ABE4]"
               >
                 <option value="user">User</option>
                 <option value="supervisor">Supervisor</option>
                 <option value="admin">Admin</option>
+                <option value="mayor">Mayor</option>
               </select>
             </div>
             

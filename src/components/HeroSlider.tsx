@@ -5,23 +5,69 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Define the illustration data
+// const illustrations = [
+//   {
+//     id: 1,
+//     src: '/illustrations/a.png',
+//     alt: 'Road Repair Illustration 1',
+//   },
+//   {
+//     id: 2,
+//     src: '/illustrations/b.png',
+//     alt: 'Road Repair Illustration 2',
+//   },
+//   {
+//     id: 3,
+//     src: '/illustrations/c.png',
+//     alt: 'Road Repair Illustration 3',
+//   },
+//   {
+//     id: 4,
+//     src: '/illustrations/d.png',
+//     alt: 'Road Repair Illustration 4',
+//   },
+//   {
+//     id: 5,
+//     src: '/illustrations/e.png',
+//     alt: 'Road Repair Illustration 5',
+//   },
+//   {
+//     id: 6,
+//     src: '/illustrations/f.png',
+//     alt: 'Road Repair Illustration 6',
+//   },
+// ];
+
 const illustrations = [
   {
     id: 1,
-    src: '/illustrations/road-repair-1.svg',
+    src: '/illustrations/p1.png',
     alt: 'Road Repair Illustration 1',
   },
   {
     id: 2,
-    src: '/illustrations/road-repair-2.svg',
+    src: '/illustrations/p2.png',
     alt: 'Road Repair Illustration 2',
-  },
+  }, 
   {
     id: 3,
-    src: '/illustrations/road-repair-3.svg',
+    src: '/illustrations/p3.png',
     alt: 'Road Repair Illustration 3',
   },
-];
+  {
+    id: 4,
+    src: '/illustrations/p4.png',
+    alt: 'Road Repair Illustration 4',
+  },
+  {
+    id: 5,
+    src: '/illustrations/p5.png',
+    alt: 'Road Repair Illustration 4',
+  },
+]
+
+  
+  
 
 const HeroSlider = () => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -75,7 +121,7 @@ const HeroSlider = () => {
   };
 
   return (
-    <div className="relative h-[500px] w-full max-w-[600px] mx-auto overflow-hidden">
+    <div className="relative h-[550px] w-full max-w-[700px] mx-auto overflow-hidden">
       {/* Illustrations container with transparent background */}
       <div className="relative h-full w-full overflow-hidden p-8">
         <AnimatePresence initial={false} custom={direction} mode="wait">
@@ -98,7 +144,6 @@ const HeroSlider = () => {
               alt={illustrations[activeIndex].alt}
               fill
               className="object-contain p-8"
-              style={{ filter: 'drop-shadow(0px 10px 15px rgba(0, 0, 0, 0.1))' }} // Subtle shadow
             />
           </motion.div>
         </AnimatePresence>

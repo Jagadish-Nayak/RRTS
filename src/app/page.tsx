@@ -428,7 +428,7 @@ export default function Home() {
             
             {/* Right Column - Contact Form */}
             <div className="w-full md:w-1/2 mt-8 md:mt-0">
-              <form>
+            <form>
                 <div className="mb-6">
                   <label className="block text-gray-700 mb-2">Name</label>
                   <div className="flex gap-4">
@@ -437,11 +437,11 @@ export default function Home() {
                       className="w-1/2 px-4 py-3 text-gray-700 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00ABE4]"
                       placeholder="First"
                     />
-                    <input
-                      type="text"
+                  <input
+                    type="text"
                       className="w-1/2 px-4 py-3 text-gray-700 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00ABE4]"
                       placeholder="Last"
-                    />
+                  />
                   </div>
                 </div>
                 
@@ -461,27 +461,27 @@ export default function Home() {
                     className="w-full text-gray-700 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00ABE4]"
                     placeholder="xxx-xxx-xxxx"
                   />
-                </div>
+              </div>
                 
-                <div className="mb-6">
+              <div className="mb-6">
                   <label className="block text-gray-700 mb-2">Message</label>
-                  <textarea
-                    rows={4}
+                <textarea
+                  rows={4}
                     className="w-full px-4 text-gray-700 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00ABE4]"
                     placeholder="Type your message..."
-                  ></textarea>
-                </div>
+                ></textarea>
+              </div>
                 
-                <button
-                  type="submit"
+              <button
+                type="submit"
                   className="px-8 py-3 rounded-md bg-[#00ABE4] text-white font-medium hover:shadow-lg
                   hover:bg-[#00ABE0] transition-all duration-300 cursor-pointer"
                 >
                   Submit
-                </button>
-              </form>
-            </div>
+              </button>
+            </form>
           </div>
+        </div>
         </div>
       </section>
 

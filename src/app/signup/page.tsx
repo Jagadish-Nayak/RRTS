@@ -3,6 +3,9 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
+import toast from 'react-hot-toast';
 import { 
   FaEye, 
   FaEyeSlash, 
@@ -43,6 +46,7 @@ export default function Signup() {
     address: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   // Toggle password visibility
   const togglePasswordVisibility = () => {
@@ -202,47 +206,81 @@ export default function Signup() {
   };
 
   // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (validateForm()) {
       setIsSubmitting(true);
       
-      // Log form data to console
-      console.log('Form submitted with data:', formData);
+      try {
+        // Create a submission object (excluding confirmPassword)
+        const submissionData = {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          dob: formData.dob,
+          gender: formData.gender,
+          email: formData.email,
+          password: formData.password,
+          phone: formData.phone,
+          pincode: formData.pincode,
+          address: formData.address
+        };
+        
+        // Call the API endpoint
+        const response = await axios.post('/api/auth/signup', submissionData);
+        
+        if (response.data.success) {
+          // Show success toast
+          toast.success('Account created successfully! Redirecting to login...');
+          toast.success('Your username id is the prefix of your email id before @');
+          // Reset form
+          setFormData({
+            firstName: '',
+            lastName: '',
+            dob: '',
+            gender: '',
+            email: '',
+            password: '',
+            confirmPassword: '',
+            phone: '',
+            pincode: '',
+            address: ''
+          });
+          
+          // Redirect to login page after a short delay
+          setTimeout(() => {
+            router.push('/login');
+          }, 2000);
+        }
+      } catch (error: unknown) {
+        console.error('Signup error:', error);
       
-      // Simulate API call
-      setTimeout(() => {
+        let errorMessage = 'Something went wrong. Please try again.';
+      
+        // Type guard to check if error is an Axios error
+        if (axios.isAxiosError(error) && error.response?.data?.message) {
+          errorMessage = error.response.data.message;
+        }
+      
+        toast.error(errorMessage);
+      } finally {
         setIsSubmitting(false);
-        // Reset form after successful submission
-        setFormData({
-          firstName: '',
-          lastName: '',
-          dob: '',
-          gender: '',
-          email: '',
-          password: '',
-          confirmPassword: '',
-          phone: '',
-          pincode: '',
-          address: ''
-        });
-      }, 1500);
+      }
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Left side - Illustration (hidden on mobile) */}
-      <div className="hidden md:flex md:w-1/2 bg-[#00ABE4] items-center justify-center">
+      <div className="hidden md:flex md:w-1/2 bg-[#89CFF3] items-center justify-center">
         <div className="p-12 max-w-md">
           <h1 className="text-4xl font-bold text-white mb-6">Join NEXTGEN</h1>
           <p className="text-white text-lg mb-8">
             Create your account to access our road repair tracking and management platform.
           </p>
-          <div className="relative h-64 w-full">
+          <div className="relative min-h-96 w-full">
             <Image 
-              src="/illustrations/road-repair-2.svg" 
+              src="/signup.svg" 
               alt="Road Repair Illustration" 
               fill
               className="object-contain"
@@ -309,10 +347,10 @@ export default function Signup() {
                     className={`w-full px-4 py-3 border ${errors.lastName ? 'border-red-500' : 'border-gray-400'} rounded-md focus:outline-none focus:ring-2 focus:ring-[#00ABE4] text-gray-700`}
                     placeholder="Last Name"
                   />
+                </div>
                   {errors.lastName && (
                     <p className="mt-1 text-red-500 text-sm">{errors.lastName}</p>
                   )}
-                </div>
               </div>
             </div>
             
@@ -336,10 +374,10 @@ export default function Signup() {
                       onChange={handleChange}
                       className={`w-full pl-10 pr-4 py-3  border ${errors.dob ? 'border-red-500' : 'border-gray-400'} rounded-md focus:outline-none focus:ring-2 focus:ring-[#00ABE4] text-gray-700`}
                     />
+                  </div>
                     {errors.dob && (
                       <p className="mt-1 text-red-500 text-sm">{errors.dob}</p>
                     )}
-                  </div>
                 </div>
                 <div className="relative w-1/2">
                   <label htmlFor="gender" className="block text-gray-700 font-medium mb-2">
@@ -361,10 +399,10 @@ export default function Signup() {
                       <option value="female">Female</option>
                       <option value="other">Other</option>
                     </select>
+                  </div>
                     {errors.gender && (
                       <p className="mt-1 text-red-500 text-sm">{errors.gender}</p>
                     )}
-                  </div>
                 </div>
               </div>
             </div>
@@ -387,10 +425,10 @@ export default function Signup() {
                   className={`w-full pl-10 pr-4 py-3 border ${errors.email ? 'border-red-500' : 'border-gray-400'} rounded-md focus:outline-none focus:ring-2 focus:ring-[#00ABE4] text-gray-700`}
                   placeholder="example@email.com"
                 />
+              </div>
                 {errors.email && (
                   <p className="mt-1 text-red-500 text-sm">{errors.email}</p>
                 )}
-              </div>
             </div>
             
             {/* Password and Confirm Password */}
@@ -424,10 +462,10 @@ export default function Signup() {
                         <FaEye className="text-gray-700" />
                       )}
                     </button>
+                  </div>
                     {errors.password && (
                       <p className="mt-1 text-red-500 text-sm">{errors.password}</p>
                     )}
-                  </div>
                 </div>
                 <div className="relative w-1/2">
                   <label htmlFor="confirmPassword" className="block text-gray-700 font-medium mb-2">
@@ -486,10 +524,10 @@ export default function Signup() {
                       className={`w-full pl-10 pr-4 py-3 border ${errors.phone ? 'border-red-500' : 'border-gray-400'} rounded-md focus:outline-none focus:ring-2 focus:ring-[#00ABE4] text-gray-700`}
                       placeholder="Phone number"
                     />
+                  </div>
                     {errors.phone && (
                       <p className="mt-1 text-red-500 text-sm">{errors.phone}</p>
                     )}
-                  </div>
                 </div>
                 <div className="relative w-1/2">
                   <label htmlFor="pincode" className="block text-gray-700 font-medium mb-2">
@@ -509,10 +547,10 @@ export default function Signup() {
                       className={`w-full pl-10 pr-4 py-3 border ${errors.pincode ? 'border-red-500' : 'border-gray-400'} rounded-md focus:outline-none focus:ring-2 focus:ring-[#00ABE4] text-gray-700`}
                       placeholder="6-digit pincode"
                     />
+                  </div>
                     {errors.pincode && (
                       <p className="mt-1 text-red-500 text-sm">{errors.pincode}</p>
                     )}
-                  </div>
                 </div>
               </div>
             </div>
@@ -535,10 +573,10 @@ export default function Signup() {
                   className={`w-full pl-10 pr-4 py-3 border ${errors.address ? 'border-red-500' : 'border-gray-400'} rounded-md focus:outline-none focus:ring-2 focus:ring-[#00ABE4] text-gray-700`}
                   placeholder="Enter your full address"
                 ></textarea>
+              </div>
                 {errors.address && (
                   <p className="mt-1 text-red-500 text-sm">{errors.address}</p>
                 )}
-              </div>
             </div>
             
             {/* Submit Button */}
