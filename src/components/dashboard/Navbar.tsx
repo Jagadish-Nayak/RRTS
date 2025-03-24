@@ -31,6 +31,17 @@ export default function Navbar({ setIsSidebarOpen }: NavbarProps) {
     setIsLogoutModalOpen(true); // Open logout modal
   };
 
+  const [role, setRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      setRole(JSON.parse(userData).role);
+    }else{
+      setRole("user");
+    }
+  }, []);
+
   return (
     <>
       <header className="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-4 sticky top-0 z-20">
@@ -95,7 +106,7 @@ export default function Navbar({ setIsSidebarOpen }: NavbarProps) {
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
                 <div className="px-4 py-2 border-b border-gray-100">
                   <p className="text-sm font-medium text-gray-700">John Doe</p>
-                  <p className="text-xs text-gray-500">Role: Administrator</p>
+                  <p className="text-[15px] text-gray-500">{role}</p>
                 </div>
                 <Link 
                   href="/profile" 

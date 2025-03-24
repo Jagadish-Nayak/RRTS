@@ -19,6 +19,8 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     const userData = localStorage.getItem("user");
     if (userData) {
       setRole(JSON.parse(userData).role);
+    }else{
+      setRole("user");
     }
   }, []);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
@@ -47,20 +49,21 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
           w-64 bg-white border-r h-screen border-gray-200 fixed inset-y-0 z-50
           transform transition-transform duration-300 ease-in-out
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-          md:translate-x-0 md:static md:z-0
+          md:translate-x-0 md:fixed md:left-0 md:top-0
+ md:z-0
         `}
       >
         {/* Sidebar Header */}
         <div className="px-4 h-[10%] border-gray-200 flex items-center justify-between">
-          <Link href="/dashboard" className="flex items-center">
+          <Link href="/dashboard" className="flex items-center gap-1.5">
             <Image 
-              src="/logo.svg" 
+              src="/logo.png" 
               alt="Road Repair Tracker Logo" 
               width={40} 
               height={40}
               className="mr-2"
             />
-            <span className="text-[20px] font-semibold">Road Repair</span>
+            <h1 className="text-2xl font-bold text-[#00ABE4]">FixMyRoad</h1>
           </Link>
           
           {/* Mobile close button */}
@@ -98,10 +101,13 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                           {item.href === "/logout" ? (
                             // Special handling for logout item
                             <button
-                              onClick={() => setIsLogoutModalOpen(true)}
-                              className="flex items-center w-full text-left justify-center lg:justify-start gap-4 text-gray-500 py-2 md:px-2 rounded-md hover:bg-[#e6f4fb] hover:text-[#00ABE4] transition-colors"
+                              
+                              onClick={() => {
+                                if(isOpen){ setIsOpen(false)}
+                                setIsLogoutModalOpen(true)}}
+                              className="flex items-center w-full text-left justify-center lg:justify-start gap-4 text-gray-500 py-2 md:px-2 rounded-md hover:bg-[#e6f4fb] hover:text-red-700 transition-colors"
                             >
-                              <div className="flex items-center justify-center">
+                              <div className="flex items-center text-red-500 justify-center">
                                 <span className="h-6 w-6 mr-2">{item.icon}</span>
                                 <span>{item.label}</span>
                               </div>
@@ -109,7 +115,8 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                           ) : (
                             // Normal link for other items
                             <Link
-                              href={item.href}
+                              onClick={()=>{if(isOpen){ setIsOpen(false)}}}
+                              href={item.href.startsWith("/") ? `/${role}${item.href}` : item.href}
                               className="flex items-center justify-center lg:justify-start gap-4 text-gray-500 py-3 md:px-2 rounded-md hover:bg-[#e6f4fb] hover:text-[#00ABE4] transition-colors"
                             >
                               <div className="flex items-center justify-center">

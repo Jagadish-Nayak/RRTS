@@ -294,14 +294,15 @@ export default function Signup() {
         <div className="w-full max-w-md">
           {/* Logo */}
           <div className="flex justify-center mb-2">
-            <Link href="/">
+            <Link href="/" className='flex items-center gap-1.5'>
               <Image 
-                src="/logo.svg" 
+                src="/logo.png" 
                 alt="Road Repair Tracker Logo" 
-                width={180} 
+                width={50} 
                 height={50} 
                 className="cursor-pointer"
               />
+              <h1 className="text-2xl font-bold text-[#00ABE4]">FixMyRoad</h1>
             </Link>
           </div>
           
@@ -347,10 +348,10 @@ export default function Signup() {
                     className={`w-full px-4 py-3 border ${errors.lastName ? 'border-red-500' : 'border-gray-400'} rounded-md focus:outline-none focus:ring-2 focus:ring-[#00ABE4] text-gray-700`}
                     placeholder="Last Name"
                   />
-                </div>
                   {errors.lastName && (
                     <p className="mt-1 text-red-500 text-sm">{errors.lastName}</p>
                   )}
+                </div>
               </div>
             </div>
             

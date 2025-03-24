@@ -62,6 +62,34 @@ export default function UserDashboard() {
       content: 'Don\'t miss our upcoming training session on advanced reporting techniques.',
       date: 'July 3, 2023',
       bgColor: 'bg-purple-50 border-purple-200'
+    },
+    {
+      id: 5,
+      title: 'System Maintenance',
+      content: 'The system will be under maintenance on July 15th from 2 AM to 5 AM.',
+      date: 'July 10, 2023',
+      bgColor: 'bg-blue-50 border-blue-200'
+    },
+    {
+      id: 6,
+      title: 'New Feature Release',
+      content: 'We\'re excited to announce the release of our new reporting feature!',
+      date: 'July 8, 2023',
+      bgColor: 'bg-green-50 border-green-200'
+    },
+    {
+      id: 7,
+      title: 'Holiday Notice',
+      content: 'Our offices will be closed for the upcoming holiday on July 20th.',
+      date: 'July 5, 2023',
+      bgColor: 'bg-yellow-50 border-yellow-200'
+    },
+    {
+      id: 8,
+      title: 'Training Session',
+      content: 'Don\'t miss our upcoming training session on advanced reporting techniques.',
+      date: 'July 3, 2023',
+      bgColor: 'bg-purple-50 border-purple-200'
     }
   ];
   

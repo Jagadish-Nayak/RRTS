@@ -10,6 +10,11 @@ const complaintSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Supervisor'
     },
+    title: {
+        type: String,
+        required: true,
+        trim: true
+    },
     location: {
         type: String
     },

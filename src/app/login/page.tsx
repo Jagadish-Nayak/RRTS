@@ -143,14 +143,15 @@ export default function Login() {
         <div className="w-full max-w-md">
           {/* Logo */}
           <div className="flex justify-center mb-8">
-            <Link href="/">
+            <Link href="/" className='flex items-center gap-1.5'>
               <Image 
-                src="/logo.svg" 
+                src="/logo.png" 
                 alt="Road Repair Tracker Logo" 
-                width={180} 
+                width={50} 
                 height={50} 
                 className="cursor-pointer"
               />
+              <h1 className="text-2xl font-bold text-[#00ABE4]">FixMyRoad</h1>
             </Link>
           </div>
           

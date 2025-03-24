@@ -74,14 +74,15 @@ const Navbar = ({ activeSection }: NavbarProps) => {
               logoLoaded ? 'translate-x-0 opacity-100' : '-translate-x-10 opacity-0'
             }`}
           >
-            <Link href="/">
+            <Link href="/" className='flex items-center gap-1.5'>
               <Image 
-                src="/logo.svg" 
+                src="/logo.png" 
                 alt="Road Repair Logo" 
-                width={150} 
-                height={40} 
+                width={50} 
+                height={50} 
                 className="cursor-pointer"
               />
+              <h1 className="text-2xl font-bold text-[#00ABE4]">FixMyRoad</h1>
             </Link>
           </div>
 

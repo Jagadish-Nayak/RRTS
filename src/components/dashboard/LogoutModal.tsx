@@ -50,7 +50,7 @@ export default function LogoutModal({ isOpen, onClose }: LogoutModalProps) {
           <h3 className="text-lg font-semibold text-gray-800">Logout Confirmation</h3>
           <button 
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 focus:outline-none"
+            className="text-gray-400 cursor-pointer hover:text-gray-600 focus:outline-none"
           >
             <FaTimes size={20} />
           </button>
@@ -62,13 +62,13 @@ export default function LogoutModal({ isOpen, onClose }: LogoutModalProps) {
           <div className="flex justify-center gap-4">
             <button
               onClick={onClose}
-              className="px-5 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md font-medium transition-colors"
+              className="px-5 py-2 cursor-pointer bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md font-medium transition-colors"
             >
               Cancel
             </button>
             <button
               onClick={handleLogout}
-              className="px-5 py-2 bg-[#00ABE4] hover:bg-[#0090c0] text-white rounded-md font-medium transition-colors"
+              className="px-5 cursor-pointer py-2 bg-[#00ABE4] hover:bg-[#0090c0] text-white rounded-md font-medium transition-colors"
             >
               I&apos;m Sure
             </button>
