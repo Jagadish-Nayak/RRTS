@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -13,6 +13,7 @@ import {
 } from 'react-icons/fa';
 import StatCard from '@/components/dashboard/StatCard';
 import { MdFeedback, MdVerified } from 'react-icons/md';
+
 
 interface UserProfile {
   firstName: string;
@@ -42,52 +43,37 @@ export default function ProfilePage() {
     address: ''
   });
 
-  useEffect(() => {
-    const token = localStorage.getItem('token'); // Retrieve token inside useEffect
-    if (token) {
-      fetchUserProfile(token);
-    }
-  }, []);
-
-  const fetchUserProfile = async (token: string) => {
+  const fetchUserProfile = useCallback(async (token: string) => {
     try {
-      // Retrieve token from localStorage
-  
+      toast.loading('Loading...');
       const response = await axios.get('/api/user/profile', {
-        headers: {
-          Authorization: `Bearer ${token}`, // Add token to Authorization header
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
   
       const userData = response.data;
-  
-      // Split username into firstName and lastName
       const nameParts = userData.username ? userData.username.split(' ') : [];
-      userData.firstName = nameParts[0] || ''; // First word as firstName
-      userData.lastName = nameParts.slice(1).join(' ') || ''; // Remaining as lastName
+      userData.firstName = nameParts[0] || '';
+      userData.lastName = nameParts.slice(1).join(' ') || '';
+      userData.dob = new Date(userData.dob).toISOString().split('T')[0];
   
-      // Convert dob to string
-      const dob = new Date(userData.dob);
-      userData.dob = dob.toISOString().split('T')[0];
-      complaints = userData.complaints.length;
-      feedbacks = userData.feedbacks.length;
-      console.log(complaints,feedbacks);
-      // Save the updated user data
       setUserProfile(userData);
       setFormData(userData);
-    } catch (error: unknown) {
-        console.error('Error fetching profile data:', error);
-      
-        let errorMessage = 'Something went wrong.';
-      
-        // Type guard to check if error is an Axios error
-        if (axios.isAxiosError(error) && error.response?.data?.message) {
-          errorMessage = error.response.data.message;
-        }
-      
-        toast.error(errorMessage);
+      toast.dismiss();
+    } catch (error) {
+      console.error('Error fetching profile data:', error);
+      toast.error('Failed to fetch profile data');
+    }
+  }, []);
+  
+useEffect(() => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem('token');
+      if (token) {
+        fetchUserProfile(token);
       }
-  };
+    }
+  }, [fetchUserProfile]);
+  
   
   
 

@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import Navbar from '../components/Navbar';
 import HeroSlider from '../components/HeroSlider';
 import { FaCalendarAlt, FaProjectDiagram, FaCheckCircle, FaSmileBeam, FaArrowUp } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
 
 // Counter component for animated numbers
 interface AnimatedCounterProps {
@@ -85,6 +86,7 @@ const AnimatedCounter = ({ end, title, duration = 2000, icon }: AnimatedCounterP
 };
 
 export default function Home() {
+  const router = useRouter();
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   
@@ -183,6 +185,9 @@ export default function Home() {
                     backgroundColor: '#00ABE4',
                     color: '#FFFFFF'
                   }}
+                  onClick={() => {
+                    router.push('/login');
+                  }}
                 >
                   Get Started
                 </button>
@@ -199,8 +204,7 @@ export default function Home() {
                   onMouseOut={(e) => {
                     e.currentTarget.style.backgroundColor = 'transparent';
                     e.currentTarget.style.color = '#00ABE4';
-                  }}
-                >
+                  }}>
                   Contact Us
                 </button>
               </div>

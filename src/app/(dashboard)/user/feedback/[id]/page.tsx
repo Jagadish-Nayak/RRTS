@@ -22,7 +22,7 @@ export default function FeedbackPage() {
   useEffect(() => {
     // Check if there are completed complaints
     setHasCompletedComplaints(dummyCompletedComplaints.length > 0);
-    
+  
     // Set initial complaint from URL if available
     const complaintId = pathname.split('/').pop();
     if (complaintId && dummyCompletedComplaints.some(c => c.id === complaintId)) {
@@ -31,7 +31,8 @@ export default function FeedbackPage() {
       setSelectedComplaint(dummyCompletedComplaints[0].id);
       router.push(`/user/feedback/${dummyCompletedComplaints[0].id}`);
     }
-  }, [pathname]);
+  }, [pathname, router]); // Add 'router' to dependency array
+  
 
   const handleComplaintChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newComplaintId = e.target.value;
