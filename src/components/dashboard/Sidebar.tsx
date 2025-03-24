@@ -142,8 +142,8 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 <FaUser className="text-gray-600" />
               </div>
               <div className="ml-3 hidden lg:block">
-                <p className="text-sm font-medium text-gray-700">John Doe</p>
-                <p className="text-xs text-gray-500">john.doe@example.com</p>
+                <p className="text-sm font-medium text-gray-700">{JSON.parse(localStorage.getItem("user") || "John").username}</p>
+                <p className="text-xs text-gray-500">{JSON.parse(localStorage.getItem("user") || "").email}</p>
               </div>
             </div>
           </div>

@@ -5,6 +5,7 @@ import { FaSearch, FaSort, FaSortUp, FaSortDown, FaEye, FaPlus } from 'react-ico
 import { GiProgression } from 'react-icons/gi';
 import { useRouter } from 'next/navigation';
 import TrackStatusModal from '@/components/complaint/TrackStatusModal';
+import { MdFeedback } from 'react-icons/md';
 
 // Define types for our complaint data
 interface Complaint {
@@ -148,7 +149,7 @@ export default function ComplaintsList() {
     pageNumbers.push(i);
   }
   return (
-    <div className="w-full p-4 sm:p-6 text-gray-600">
+    <div className="w-full text-gray-600">
       <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
           <h1 className="text-2xl font-bold text-gray-800">All Complaints</h1>
@@ -257,7 +258,7 @@ export default function ComplaintsList() {
 
         
         {/* Complaints Table */}
-        <div className="overflow-x-auto w-[80vw] md:w-[48vw] lg:min-w-full rounded-lg border border-gray-200">
+        <div className="overflow-x-auto w-[84vw] md:w-[54vw] lg:min-w-full rounded-lg border border-gray-200">
           <table className="lg:min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -335,13 +336,16 @@ export default function ComplaintsList() {
                       {complaint.estimatedEndDate || '-'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {/* View Details Button */}
                         <button 
                           className="cursor-pointer text-blue-600 hover:text-blue-900 transition-colors"
-                          title="View Details" onClick={() => router.push(`/user/complaint/${complaint.id}`)}
+                          title="View Details"
+                          onClick={() => router.push(`/user/complaint/${complaint.id}`)}
                         >
                           <FaEye size={18} />
                         </button>
 
+                        {/* Track Progress Button */}
                         <button
                           className="cursor-pointer text-green-600 hover:text-green-900 transition-colors ml-4"
                           title="Track Progress"
@@ -352,7 +356,22 @@ export default function ComplaintsList() {
                         >
                           <GiProgression size={18} />
                         </button>
+
+                        {/* Give Feedback Button */}
+                        <button
+                          className={`ml-4 transition-colors ${
+                            complaint.status === "Completed"
+                              ? "cursor-pointer text-amber-700 hover:text-amber-900"
+                              : "cursor-not-allowed text-gray-400"
+                          }`}
+                          title="Give Feedback"
+                          disabled={complaint.status !== "Completed"}
+                          onClick={() => {if(complaint.status === 'Completed') router.push(`/user/feedback/${complaint.id}.toString()`)}}
+                        >
+                          <MdFeedback size={18} />
+                        </button>
                       </td>
+
                   </tr>
                 ))
               ) : (

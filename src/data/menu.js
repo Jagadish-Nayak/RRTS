@@ -1,8 +1,6 @@
 import { 
     FaWpforms , 
-    FaClipboardList, 
-    FaMapMarkedAlt, 
-    FaCog, 
+    FaClipboardList,  
     FaUser,
     FaSignOutAlt,
   } from "react-icons/fa";
@@ -26,16 +24,16 @@ export const menuItems = [
           visible: ["user", "admin", "supervisor", "mayor"],
         },
         {
-          icon: <FaMapMarkedAlt className="h-5 w-5" />,
-          label: "Track Complaint",
-          href: "/track",
-          visible: ["admin", "user", "supervisor", "mayor"],
-        },
-        {
           icon: <VscFeedback className="h-5 w-5" />,
           label: "Feedbacks",
           href: "/list/feedback",
-          visible: ["user", "admin", "supervisor", "mayor"],
+          visible: ["admin", "supervisor"],
+        },
+        {
+          icon: <VscFeedback className="h-5 w-5" />,
+          label: "Give Feedback",
+          href: "/feedback/1",
+          visible: ["user"],
         },
         {
           icon: <MdManageAccounts className="h-5 w-5" />,
@@ -49,18 +47,6 @@ export const menuItems = [
           href: "/list/resources",
           visible: ["admin"],
         },
-        // {
-        //   icon: "/lesson.png",
-        //   label: "Lessons",
-        //   href: "/list/lessons",
-        //   visible: ["admin", "teacher"],
-        // },
-        // {
-        //   icon: "/exam.png",
-        //   label: "Exams",
-        //   href: "/list/exams",
-        //   visible: ["admin", "teacher", "student", "parent"],
-        // },
       ],
     },
     {
@@ -70,12 +56,6 @@ export const menuItems = [
           icon: <FaUser className="h-5 w-5" />,
           label: "Profile",
           href: "/profile",
-          visible: ["admin", "user", "supervisor", "mayor"],
-        },
-        {
-          icon: <FaCog className="h-5 w-5" />,
-          label: "Settings",
-          href: "/settings",
           visible: ["admin", "user", "supervisor", "mayor"],
         },
         {

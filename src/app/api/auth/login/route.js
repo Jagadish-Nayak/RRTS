@@ -152,8 +152,7 @@ export async function POST(request) {
       secure: process.env.NODE_ENV === 'production',
       maxAge: cookieExpiry,
     });
-    
-    // Prepare user data (don't send password)
+  
     let userData;
     if(user.role === 'user'){
       userData = {
@@ -195,4 +194,4 @@ export async function POST(request) {
       { status: 500 }
     );
   }
-} 
+}

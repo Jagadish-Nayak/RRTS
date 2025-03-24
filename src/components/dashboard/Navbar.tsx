@@ -89,7 +89,7 @@ export default function Navbar({ setIsSidebarOpen }: NavbarProps) {
               <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
                 <FaUser className="text-gray-600 h-4 w-4" />
               </div>
-              <span className="ml-2 hidden md:block">John Doe</span>
+              <span className="ml-2 hidden md:block">{JSON.parse(localStorage.getItem("user") || "John").username}</span>
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 
                 className="h-4 w-4 ml-1 hidden md:block" 
@@ -109,7 +109,7 @@ export default function Navbar({ setIsSidebarOpen }: NavbarProps) {
                   <p className="text-[15px] text-gray-500">{role}</p>
                 </div>
                 <Link 
-                  href="/profile" 
+                  href={`/${role}/profile`}
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                 >
                   Your Profile
