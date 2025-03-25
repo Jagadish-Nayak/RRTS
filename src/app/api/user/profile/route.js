@@ -56,15 +56,14 @@ export async function PUT(request) {
     const updatedUser = await User.findOneAndUpdate(
       { email: decoded.email },
       {
-        firstName: data.firstName,
-        lastName: data.lastName,
+        username: data.firstName + " " + data.lastName,
         dob: data.dob,
         gender: data.gender,
         phone: data.phone,
         pincode: data.pincode,
         address: data.address,
       },
-      { new: true, select: 'firstName lastName email dob gender phone pincode address isVerified avatar' }
+      { new: true, select: 'username email dob gender phone pincode address' }
     );
 
     if (!updatedUser) {
