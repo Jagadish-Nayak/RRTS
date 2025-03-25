@@ -14,13 +14,21 @@ interface SidebarProps {
 export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   
   const [role, setRole] = useState<string | null>(null);
-
+  const [username, setUsername] = useState<string | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
   useEffect(() => {
-    const userData = localStorage.getItem("user");
+    let userData;
+    if (typeof window !== "undefined") {
+      userData = window.localStorage.getItem("user");
+    }
     if (userData) {
       setRole(JSON.parse(userData).role);
+      setUsername(JSON.parse(userData).username);
+      setEmail(JSON.parse(userData).email);
     }else{
       setRole("user");
+      setUsername("John Doe");
+      setEmail("john.doe@example.com");
     }
   }, []);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
@@ -142,8 +150,8 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 <FaUser className="text-gray-600" />
               </div>
               <div className="ml-3 hidden lg:block">
-                <p className="text-sm font-medium text-gray-700">{JSON.parse(localStorage.getItem("user") || "John").username}</p>
-                <p className="text-xs text-gray-500">{JSON.parse(localStorage.getItem("user") || "").email}</p>
+                <p className="text-sm font-medium text-gray-700">{username}</p>
+                <p className="text-xs text-gray-500">{email}</p>
               </div>
             </div>
           </div>

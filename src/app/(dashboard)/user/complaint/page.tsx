@@ -1,6 +1,6 @@
 'use client';
-
 import { useState, useRef, ChangeEvent, FormEvent } from 'react';
+import Image from 'next/image';
 
 export default function ComplaintForm() {
   // Form state
@@ -330,10 +330,13 @@ export default function ComplaintForm() {
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
                   {imagePreview.map((src, index) => (
                     <div key={index} className="relative">
-                      <img
+                      <Image
                         src={src}
                         alt={`Preview ${index + 1}`}
                         className="w-full h-24 object-cover rounded-md"
+                        width={100} // Adjust width as needed
+                        height={96} // Adjust height as needed
+                        layout="responsive"
                       />
                       <button
                         type="button"

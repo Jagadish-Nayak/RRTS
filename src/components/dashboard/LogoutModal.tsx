@@ -19,8 +19,12 @@ export default function LogoutModal({ isOpen, onClose }: LogoutModalProps) {
       } catch (error) {
         console.error('Error during logout API call:', error);
       }
-      localStorage.removeItem('user');
-      localStorage.removeItem('token');
+      if (typeof window !== "undefined") {
+        window.localStorage.removeItem('user');
+        window.localStorage.removeItem('token');
+      }else{
+        console.error('No window object found');
+      }
       onClose();
       toast.success('Logged out successfully');
       router.push('/login');

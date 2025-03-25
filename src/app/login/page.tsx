@@ -82,10 +82,13 @@ export default function Login() {
         const response = await axios.post('/api/auth/login', formData);
         
         if (response.data.success) {
-          // Store user data in localStorage
-          localStorage.setItem('user', JSON.stringify(response.data.user));
-          localStorage.setItem('token', response.data.token);
-          
+          // Store user data in localStorage]
+          if (typeof window !== "undefined") {
+            window.localStorage.setItem('user', JSON.stringify(response.data.user));
+            window.localStorage.setItem('token', response.data.token);
+          }else{
+            console.error('No window object found');
+          }
           // Show success toast
           toast.success(`Welcome, ${response.data.user.username || 'User'}!`);
           

@@ -32,13 +32,19 @@ export default function Navbar({ setIsSidebarOpen }: NavbarProps) {
   };
 
   const [role, setRole] = useState<string | null>(null);
+  const [username, setUsername] = useState<string | null>(null);
 
   useEffect(() => {
-    const userData = localStorage.getItem("user");
+    let userData;
+    if (typeof window !== "undefined") {
+      userData = window.localStorage.getItem("user");
+    }
     if (userData) {
       setRole(JSON.parse(userData).role);
+      setUsername(JSON.parse(userData).username);
     }else{
       setRole("user");
+      setUsername("John Doe");
     }
   }, []);
 
@@ -89,7 +95,7 @@ export default function Navbar({ setIsSidebarOpen }: NavbarProps) {
               <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
                 <FaUser className="text-gray-600 h-4 w-4" />
               </div>
-              <span className="ml-2 hidden md:block">{JSON.parse(localStorage.getItem("user") || "John").username}</span>
+              <span className="ml-2 hidden md:block">{username}</span>
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 
                 className="h-4 w-4 ml-1 hidden md:block" 
@@ -105,7 +111,7 @@ export default function Navbar({ setIsSidebarOpen }: NavbarProps) {
             {isProfileOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
                 <div className="px-4 py-2 border-b border-gray-100">
-                  <p className="text-sm font-medium text-gray-700">John Doe</p>
+                  <p className="text-sm font-medium text-gray-700">{username}</p>
                   <p className="text-[15px] text-gray-500">{role}</p>
                 </div>
                 <Link 

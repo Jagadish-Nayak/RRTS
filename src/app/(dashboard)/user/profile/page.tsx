@@ -65,14 +65,20 @@ export default function ProfilePage() {
     }
   }, []);
   
-useEffect(() => {
+const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
     if (typeof window !== "undefined") {
-      const token = localStorage.getItem('token');
-      if (token) {
-        fetchUserProfile(token);
-      }
+      setToken(window.localStorage.getItem('token'));
     }
-  }, [fetchUserProfile]);
+  }, []);
+  
+  useEffect(() => {
+    if (token) {
+      fetchUserProfile(token);
+    }
+  }, [token, fetchUserProfile]);
+  
   
   
   
@@ -154,7 +160,10 @@ useEffect(() => {
     if (!validateForm()) return;
     
     try {
-      const token = localStorage.getItem('token');
+        let token;
+        if (typeof window !== "undefined") {
+            token = window.localStorage.getItem('token');
+        }
       const response = await axios.put('/api/user/profile', formData, {
         headers: {
           Authorization: `Bearer ${token}`,
