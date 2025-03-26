@@ -57,7 +57,7 @@ export function SupervisorAssignmentTable({ pincode = '110001', complaintId = '1
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mb-6">
       <h2 className="text-xl font-semibold text-gray-800 mb-4">Available Supervisors in {pincode} for complaint {complaintId}</h2>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto w-[73vw] sm:w-[80vw] md:w-[50vw] lg:min-w-full ">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
