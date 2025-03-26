@@ -45,7 +45,7 @@ export function SupervisorAssignmentTable({ pincode, onAssign }: SupervisorAssig
     <div className="bg-white rounded-lg shadow-md p-4">
       <h3 className="text-lg font-semibold mb-4">Available Supervisors in {pincode}</h3>
       
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto w-[86vw] sm:w-[86vw] md:w-[54vw] lg:min-w-full">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
