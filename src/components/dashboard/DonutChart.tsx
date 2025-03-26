@@ -13,7 +13,7 @@ const DonutChart = ({ data, title }: DonutChartProps) => {
   
   return (
     <div className="bg-white p-4 rounded-lg shadow-md">
-      {title && <h3 className="text-lg font-medium mb-4 text-gray-700">{title}</h3>}
+      {title && <h3 className="text-lg font-medium mb-2 text-gray-700">{title}</h3>}
       <div className="w-full h-64">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>

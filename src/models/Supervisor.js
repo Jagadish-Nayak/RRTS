@@ -17,6 +17,10 @@ const supervisorSchema = new Schema({
     unique: true,
     trim: true
   },
+  dob: {
+    type: Date,
+    required: true
+  },
   password: {
     type: String,
     required: true
