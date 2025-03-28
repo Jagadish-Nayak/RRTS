@@ -20,6 +20,9 @@ interface ComplaintDetails {
       completedTasks: number;
       rating: number;
     };
+    estimatedExpense: number;
+    rating: number;
+    message: string;
     images: string[];
     estimatedCompletionDate?: string;
     statusUpdates: {
@@ -78,6 +81,9 @@ export default function AdminComplaintDetails() {
               '/illustrations/e.png',
             ],
             estimatedCompletionDate: '2023-08-25',
+            estimatedExpense: 10000,
+            rating: 4.5,
+            message: 'The pothole has been repaired and the road is now safe for traffic.',
             statusUpdates: [
               { id: 1, date: '2023-07-15 09:30 AM', message: 'Complaint submitted successfully', status: 'Submitted' },
               { id: 2, date: '2023-07-16 11:45 AM', message: 'Complaint assigned to supervisor John Smith', status: 'Supervisor Assigned' },

@@ -16,7 +16,6 @@ interface Supervisor {
   rating: number;
 }
 
-// Generate dummy data
 const generateDummyData = (): Supervisor[] => {
   return Array.from({ length: 30 }, (_, i) => ({
     id: `SUP${(i + 1).toString().padStart(3, '0')}`,

@@ -25,6 +25,9 @@ interface ComplaintDetails {
       completedTasks: number;
       rating: number;
     };
+    estimatedExpense: number;
+    rating: number;
+    message: string;
     images: string[];
     estimatedCompletionDate?: string;
     statusUpdates: {
@@ -64,6 +67,7 @@ export function ComplaintDetails({ complaint, role, onSupervisorAssign }: Compla
           completedTasks: 0,
           rating: 5
         });
+        complaint.status = 'Supervisor Assigned';
         setIsAssigning(false);
         toast.success('Supervisor assigned successfully');
       }
@@ -86,6 +90,9 @@ export function ComplaintDetails({ complaint, role, onSupervisorAssign }: Compla
           severity={complaint.severity}
           status={complaint.status}
           submissionDate={complaint.submissionDate}
+          estimatedExpense={complaint.estimatedExpense}
+          rating={complaint.rating}
+          message={complaint.message}
         />
       </div>
       

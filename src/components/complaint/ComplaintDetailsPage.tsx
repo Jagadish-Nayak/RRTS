@@ -37,6 +37,9 @@ interface ComplaintDetails {
       date: string;
       completed: boolean;
     }[];
+    estimatedExpense: number;
+    rating: number;
+    message: string;
   }
 
 interface ComplaintDetailsPageProps {
@@ -66,6 +69,9 @@ export function ComplaintDetailsPage({ role, complaint, onRefresh }: ComplaintDe
           severity={complaint.severity}
           status={complaint.status}
           submissionDate={complaint.submissionDate}
+          estimatedExpense={complaint.estimatedExpense}
+          rating={complaint.rating}
+          message={complaint.message}
         />
       </div>
       

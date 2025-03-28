@@ -24,6 +24,9 @@ interface ComplaintDetails {
     rating: number;
   };
   images: string[];
+  estimatedExpense: number;
+  rating: number;
+  message: string;
   estimatedCompletionDate?: string;
   statusUpdates: {
     id: number;
@@ -90,6 +93,9 @@ export default function ComplaintDetails() {
             { id: 7, date: '2023-07-18 03:15 PM', message: 'Supervisor has inspected the site and confirmed the issue. Repair team will be assigned soon.', status: 'Inspected' },
             { id: 8, date: '2023-07-22 10:00 AM', message: 'Repair work has started. Expected to be completed by August 25.', status: 'Ongoing' }
           ],
+          estimatedExpense: 10000,
+          rating: 4.5,
+          message: 'The pothole has been repaired and the road is now safe for traffic.',
           statusTimeline: [
             { status: 'Submitted', date: '2023-07-15', completed: true },
             { status: 'Supervisor Assigned', date: '2023-07-16', completed: true },

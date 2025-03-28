@@ -16,6 +16,7 @@ interface Complaint {
   severity: 'Low' | 'Medium' | 'High';
   status: 'Not Assigned' | 'Inspected' | 'Ongoing' | 'Completed' | 'Rejected';
   supervisorId: string;
+  estimatedExpense: string;
 }
 
 // Generate dummy data
@@ -38,6 +39,7 @@ const generateDummyData = (): Complaint[] => {
       location: `Sector ${Math.floor(Math.random() * 100)}, Block ${String.fromCharCode(65 + Math.floor(Math.random() * 26))}, New Delhi`,
       severity: severities[Math.floor(Math.random() * severities.length)],
       status,
+      estimatedExpense: isNotAssigned ? '' : `₹${Math.floor(Math.random() * 10000).toString().padStart(5, '0')}`,
       supervisorId: isNotAssigned ? '' : `SUP${Math.floor(Math.random() * 100).toString().padStart(3, '0')}`
     };
   });
@@ -211,9 +213,9 @@ export default function AdminComplaintsList() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                {/* <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   User Name
-                </th>
+                </th> */}
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Title
                 </th>
@@ -243,6 +245,9 @@ export default function AdminComplaintsList() {
                   Supervisor ID
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Estimated Expense
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -250,9 +255,9 @@ export default function AdminComplaintsList() {
             <tbody className="bg-white divide-y divide-gray-200">
               {currentItems.map((complaint, index) => (
                 <tr key={complaint.id} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-blue-50 transition-colors duration-150`}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {complaint.userName}
-                  </td>
+                  </td> */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {complaint.title}
                   </td>
@@ -277,6 +282,9 @@ export default function AdminComplaintsList() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {complaint.supervisorId || '-'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {complaint.estimatedExpense || '-'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <div className="flex space-x-3">

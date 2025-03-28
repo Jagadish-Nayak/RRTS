@@ -27,7 +27,7 @@ export const menuItems = [
           icon: <VscFeedback className="h-5 w-5" />,
           label: "Feedbacks",
           href: "/list/feedback",
-          visible: ["admin", "supervisor"],
+          visible: ["supervisor"],
         },
         {
           icon: <VscFeedback className="h-5 w-5" />,
@@ -56,7 +56,7 @@ export const menuItems = [
           icon: <FaUser className="h-5 w-5" />,
           label: "Profile",
           href: "/profile",
-          visible: ["admin", "user", "supervisor", "mayor"],
+          visible: ["user", "supervisor"],
         },
         {
           icon: <FaSignOutAlt className="h-5 w-5" />,
