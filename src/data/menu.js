@@ -26,7 +26,7 @@ export const menuItems = [
         {
           icon: <VscFeedback className="h-5 w-5" />,
           label: "Feedbacks",
-          href: "/list/feedback",
+          href: "/list/feedbacks",
           visible: ["supervisor"],
         },
         {

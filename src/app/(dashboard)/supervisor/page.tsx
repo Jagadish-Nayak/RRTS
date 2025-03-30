@@ -83,7 +83,7 @@ export default function SupervisorDashboard() {
   };
 
   return (
-    <div className="flex flex-col xl:flex-row gap-6 p-4">
+    <div className="flex flex-col xl:flex-row gap-6">
       {/* Main Content */}
       <div className="flex-1 space-y-6">
         {/* Charts Row */}

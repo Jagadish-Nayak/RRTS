@@ -34,7 +34,8 @@ export async function POST(request) {
       
       // Set cookie
       const cookieExpiry = rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000;
-      await cookies().set({
+      const cookieName = await cookies();
+      cookieName.set({
         name: 'auth_token',
         value: token,
         httpOnly: true,
@@ -74,7 +75,8 @@ export async function POST(request) {
       
       // Set cookie
       const cookieExpiry = rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000;
-      await cookies().set({
+      const cookieName =  await cookies();
+      cookieName.set({
         name: 'auth_token',
         value: token,
         httpOnly: true,
@@ -83,7 +85,7 @@ export async function POST(request) {
         maxAge: cookieExpiry,
       });
       
-      return NextResponse.json({
+      return NextResponse.json({  
         success: true,
         message: 'Mayor login successful',
         user: {
@@ -144,7 +146,8 @@ export async function POST(request) {
     
     // Set cookie
     const cookieExpiry = rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000;
-    await cookies().set({
+    const cookieName = await cookies();
+    cookieName.set({
       name: 'auth_token',
       value: token,
       httpOnly: true,

@@ -72,7 +72,7 @@ const AnimatedCounter = ({ end, title, duration = 2000, icon }: AnimatedCounterP
   return (
     <div 
       ref={counterRef} 
-      className="text-center p-6 bg-white rounded-xl shadow-md border border-[#E9F1FA] hover:border-[#00ABE4] hover:shadow-lg transition-all duration-300 flex flex-col items-center justify-center hover:bg-[#E9F1FA] hover:transform hover:scale-105"
+      className="text-center p-6  bg-white rounded-xl shadow-md border border-[#E9F1FA] hover:border-[#00ABE4] hover:shadow-lg transition-all duration-300 flex flex-col items-center justify-center hover:bg-[#E9F1FA] hover:transform hover:scale-105"
     >
       <div className="text-[#00ABE4] text-4xl mb-4 transition-all duration-300 group-hover:scale-110">
         {icon}
@@ -137,7 +137,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#E9F1FA] via-white to-[#E9F1FA]">
+    <div className="min-h-screen  bg-gradient-to-b from-[#E9F1FA] via-white to-[#E9F1FA]">
       <Navbar activeSection={activeSection} />
 
       {/* Scroll to Top Button */}
@@ -155,7 +155,7 @@ export default function Home() {
       <section 
         id="home" 
         ref={sectionRefs.home}
-        className="relative min-h-screen pt-20 overflow-hidden" 
+        className="relative  min-h-screen pt-20 overflow-hidden" 
         style={{ 
           background: 'linear-gradient(135deg, #E9F1FA 0%, #FFFFFF 40%, #E9F1FA 70%, #FFFFFF 100%)'
         }}

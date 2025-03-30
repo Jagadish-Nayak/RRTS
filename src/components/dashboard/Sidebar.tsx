@@ -63,7 +63,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       >
         {/* Sidebar Header */}
         <div className="px-4 h-[10%] border-gray-200 flex items-center justify-between">
-          <Link href="/dashboard" className="flex items-center gap-1.5">
+          <Link href={`/${role}`} onClick={()=>{if(isOpen){ setIsOpen(false)}}} className="flex items-center gap-1.5">
             <Image 
               src="/logo.png" 
               alt="Road Repair Tracker Logo" 
