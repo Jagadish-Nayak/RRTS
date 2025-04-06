@@ -1,4 +1,4 @@
-import { useRouter } from 'next/navigation';
+
 import { FaTimes } from 'react-icons/fa';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
@@ -7,6 +7,7 @@ interface SupervisorDeletionModalProps {
   isOpen: boolean;
   onClose: () => void;
   supervisorId: string;
+  onSuccess: () => void;
   token: string;
 }
 
@@ -15,8 +16,9 @@ export default function SupervisorDeletionModal({
   onClose,
   supervisorId,
   token,
+  onSuccess,
 }: SupervisorDeletionModalProps) {
-  const router = useRouter();
+  
 
   if (!isOpen) return null;
 
@@ -33,8 +35,8 @@ export default function SupervisorDeletionModal({
       toast.dismiss();
       if (response.data.success) {
         toast.success('Supervisor deleted successfully');
+        onSuccess();
         onClose();
-        router.refresh(); // Refresh page or fetch updated data
       } else {
         toast.error(response.data.message || 'Failed to delete supervisor');
       }

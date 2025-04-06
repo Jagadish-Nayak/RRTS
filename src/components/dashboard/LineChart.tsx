@@ -2,7 +2,7 @@ import { LineChart as RechartsLineChart, Line, XAxis, YAxis, CartesianGrid, Tool
 
 interface LineChartProps {
   data: {
-    month: string;
+    date: string;
     Completed: number;
     Pending: number;
     Rejected: number;
@@ -21,7 +21,7 @@ const LineChart = ({ data, title }: LineChartProps) => {
             margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" />
+            <XAxis dataKey="date" />
             <YAxis />
             <Tooltip />
             <Legend />

@@ -9,7 +9,9 @@ interface UpdateStatusModalProps {
   complaintId: string;
   currentStatus: string;
   complaintSeverity: string;
-  onStatusUpdate: () => void;
+  estend?: string;
+  estexp?: string;
+  onSuccess: () => void;
 }
 
 type Status = 'Inspected' | 'Ongoing' | 'Completed' | 'Rejected';
@@ -21,12 +23,14 @@ export function UpdateStatusModal({
   complaintId, 
   currentStatus,
   complaintSeverity,
-  onStatusUpdate 
+  onSuccess,
+  estend = '',
+  estexp = ''
 }: UpdateStatusModalProps) {
-  const [selectedStatus, setSelectedStatus] = useState<Status>('Inspected');
+  const [selectedStatus, setSelectedStatus] = useState('');
   const [severity, setSeverity] = useState<Severity>(complaintSeverity as Severity);
-  const [estimatedEndDate, setEstimatedEndDate] = useState('');
-  const [estimatedExpense, setEstimatedExpense] = useState('');
+  const [estimatedEndDate, setEstimatedEndDate] = useState(estend);
+  const [estimatedExpense, setEstimatedExpense] = useState(estexp);
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   
@@ -35,10 +39,12 @@ export function UpdateStatusModal({
   const preventPropagation = (e: React.MouseEvent) => {
     e.stopPropagation();
   };
-
+  
   const getAvailableStatuses = (): Status[] => {
     switch (currentStatus) {
       case 'Supervisor Assigned':
+        return ['Inspected', 'Rejected'];
+      case 'Not Inspected':
         return ['Inspected', 'Rejected'];
       case 'Inspected':
         return ['Ongoing', 'Rejected'];
@@ -57,22 +63,34 @@ export function UpdateStatusModal({
       return;
     }
 
-    if (message.split(' ').length > 30) {
-      toast.error('Message should not exceed 30 words');
+    if (message.length > 70) {
+      toast.error('Message should not exceed 70 characters');
       return;
     }
 
     setIsSubmitting(true);
     try {
       //Replace with your actual API endpoint
-      await axios.post(`/api/complaints/${complaintId}/status`, {
-        status: selectedStatus,
-        message
+      const token = localStorage.getItem('token');
+      const response = await axios.post(`/api/supervisor/update-status`, {
+        complaintId: complaintId,
+        status: selectedStatus===''?getAvailableStatuses()[0]:selectedStatus,
+        severity: severity,
+        estimatedEndDate: estimatedEndDate,
+        estimatedExpense: estimatedExpense,
+        message: message
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       });
-      
-      toast.success('Status updated successfully');
-      onStatusUpdate();
-      onClose();
+      if(response.data.success){
+        toast.success('Status updated successfully');
+        onSuccess();
+        onClose();
+      }else{
+        toast.error(response.data.message);
+      }
     } catch (error: unknown) {
         let errorMessage = 'Failed to update status';
         
@@ -167,7 +185,7 @@ export function UpdateStatusModal({
   </div>
 
   <div className="mb-6">
-    <label className="block text-sm font-medium text-gray-700 mb-2">Update Message (max 30 words)</label>
+    <label className="block text-sm font-medium text-gray-700 mb-2">Update Message (max 70 characters)</label>
     <textarea
       value={message}
       onChange={(e) => setMessage(e.target.value)}

@@ -114,7 +114,15 @@ export default function Navbar({ setIsSidebarOpen }: NavbarProps) {
                   <p className="text-sm font-medium text-gray-700">{username}</p>
                   <p className="text-[15px] text-gray-500">{role}</p>
                 </div>
-                {role === "user" || role === "supervisor" && (
+                {role === "user" && (
+                  <Link 
+                  href={`/${role}/profile`}
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                >
+                  Your Profile
+                </Link>
+                )}
+                {role === "supervisor" && (
                   <Link 
                   href={`/${role}/profile`}
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"

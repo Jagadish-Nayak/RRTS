@@ -2,7 +2,8 @@ interface Event {
   date: string;
   time: string;
   title: string;
-  type: 'meeting' | 'task' | 'other';
+  type: 'Supervisor Assigned' | "Inspected" | 'Ongoing' | 'Completed';
+  name: string;
 }
 
 interface EventsListProps {
@@ -11,6 +12,7 @@ interface EventsListProps {
 }
 
 export function EventsList({ events, selectedDate }: EventsListProps) {
+  //console.log(events);
   const filteredEvents = events.filter(event => event.date === selectedDate);
 
   return (
@@ -23,14 +25,17 @@ export function EventsList({ events, selectedDate }: EventsListProps) {
           <div
             key={index}
             className={`p-3 rounded-lg ${
-              event.type === 'meeting' ? 'bg-blue-50' :
-              event.type === 'task' ? 'bg-orange-50' : 'bg-gray-50'
+              event.type === 'Supervisor Assigned' ? 'bg-yellow-50' :
+              event.type === 'Inspected' ? 'bg-orange-50' :
+              event.type === 'Ongoing' ? 'bg-purple-50' :
+              event.type === 'Completed' ? 'bg-green-50' : 'bg-purple-50'
             }`}
           >
             <div className="flex justify-between items-center">
               <span className="font-medium">{event.title}</span>
               <span className="text-sm text-gray-600">{event.time}</span>
             </div>
+            <span className="text-sm text-gray-600">{event.name}</span>
           </div>
         ))}
         {filteredEvents.length === 0 && (

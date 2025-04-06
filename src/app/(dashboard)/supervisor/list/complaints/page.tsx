@@ -6,36 +6,42 @@ import { MdUpdate } from 'react-icons/md';
 import { useRouter } from 'next/navigation';
 import TrackStatusModal from '@/components/complaint/TrackStatusModal';
 import { UpdateStatusModal } from '@/components/supervisor/UpdateStatusModal';
-
+import axios from 'axios';
+import Loading from '@/components/Loading';
+import { toast } from 'react-hot-toast';
 interface Complaint {
   id: number;
-  userName: string;
   title: string;
   location: string;
   severity: 'Low' | 'Medium' | 'High';
-  status: 'Not Inspected' | 'Ongoing' | 'Completed' | 'Rejected';
+  status: 'Supervisor Assigned' | 'Inspected' | 'Ongoing' | 'Completed' | 'Rejected';
   estimatedEndDate: string;
   estimatedExpense: number;
   submissionDate: string;
+  statusTimeline: {
+    status: string;
+    date: string;
+    completed: boolean;
+  }[];
 }
 
 // Generate dummy data
-const generateDummyData = (): Complaint[] => {
-  const statuses: Complaint['status'][] = ['Not Inspected', 'Ongoing', 'Completed', 'Rejected'];
-  const severities: Complaint['severity'][] = ['Low', 'Medium', 'High'];
+// const generateDummyData = (): Complaint[] => {
+//   const statuses: Complaint['status'][] = ['Not Inspected', 'Ongoing', 'Completed', 'Rejected'];
+//   const severities: Complaint['severity'][] = ['Low', 'Medium', 'High'];
   
-  return Array.from({ length: 30 }, (_, i) => ({
-    id: i + 1,
-    userName: `User ${i + 1}`,
-    title: `Road damage complaint ${i + 1}`,
-    location: `Sector ${Math.floor(Math.random() * 100)}, Block ${String.fromCharCode(65 + Math.floor(Math.random() * 26))}, New Delhi`,
-    severity: severities[Math.floor(Math.random() * severities.length)],
-    status: statuses[Math.floor(Math.random() * statuses.length)],
-    estimatedEndDate: new Date(Date.now() + Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    estimatedExpense: Math.floor(Math.random() * 50000) + 5000,
-    submissionDate: new Date(2024, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString().split('T')[0],
-  }));
-};
+//   return Array.from({ length: 30 }, (_, i) => ({
+//     id: i + 1,
+//     userName: `User ${i + 1}`,
+//     title: `Road damage complaint ${i + 1}`,
+//     location: `Sector ${Math.floor(Math.random() * 100)}, Block ${String.fromCharCode(65 + Math.floor(Math.random() * 26))}, New Delhi`,
+//     severity: severities[Math.floor(Math.random() * severities.length)],
+//     status: statuses[Math.floor(Math.random() * statuses.length)],
+//     estimatedEndDate: new Date(Date.now() + Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+//     estimatedExpense: Math.floor(Math.random() * 50000) + 5000,
+//     submissionDate: new Date(2024, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString().split('T')[0],
+//   }));
+// };
 
 export default function SupervisorComplaintsList() {
   const router = useRouter();
@@ -43,19 +49,45 @@ export default function SupervisorComplaintsList() {
   const [searchTerm, setSearchTerm] = useState('');
   const [severityFilter, setSeverityFilter] = useState('');
   const [activeStatus, setActiveStatus] = useState('All');
-  const [sortField, setSortField] = useState<'estimatedEndDate' | 'estimatedExpense'>('estimatedEndDate');
+  const [sortField, setSortField] = useState<'submissionDate' | 'estimatedEndDate' | 'estimatedExpense'>('submissionDate');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const [isTrackModalOpen, setIsTrackModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
 
+  
+  const fetchComplaints = async (token: string | null) => {
+    try{
+      setIsLoading(true);
+      const response = await axios.get('/api/supervisor/complaints',{
+        headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    const data = response.data;
+    //console.log(data.complaints);
+    setComplaints(data.complaints);
+    setIsLoading(false);
+    }catch(error){
+      toast.error('Error fetching complaints');
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   useEffect(() => {
-    setComplaints(generateDummyData());
+    if(typeof window !== "undefined"){
+      const localToken = window.localStorage.getItem('token');
+      setToken(localToken);
+      fetchComplaints(localToken);
+    }
   }, []);
 
-  const handleSort = (field: 'estimatedEndDate' | 'estimatedExpense') => {
+  const handleSort = (field: 'submissionDate' | 'estimatedEndDate' | 'estimatedExpense') => {
     if (sortField === field) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
     } else {
@@ -73,7 +105,8 @@ export default function SupervisorComplaintsList() {
 
   const getStatusColor = (status: Complaint['status']) => {
     switch (status) {
-      case 'Not Inspected': return 'bg-gray-100 text-gray-800';
+      case 'Supervisor Assigned': return 'bg-gray-100 text-gray-800';
+      case 'Inspected': return 'bg-gray-100 text-blue-800';
       case 'Ongoing': return 'bg-yellow-100 text-yellow-800';
       case 'Completed': return 'bg-green-100 text-green-800';
       case 'Rejected': return 'bg-red-100 text-red-800';
@@ -95,7 +128,6 @@ export default function SupervisorComplaintsList() {
     })
     .filter(complaint => {
       const searchFields = [
-        complaint.userName.toLowerCase(),
         complaint.title.toLowerCase(),
         complaint.location.toLowerCase(),
       ];
@@ -122,6 +154,7 @@ export default function SupervisorComplaintsList() {
   const totalPages = Math.ceil(filteredComplaints.length / itemsPerPage);
 
   return (
+    isLoading ? <Loading /> :
     <div className="w-full text-gray-600">
       <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
         {/* Header */}
@@ -181,9 +214,6 @@ export default function SupervisorComplaintsList() {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  User Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Title
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -194,6 +224,17 @@ export default function SupervisorComplaintsList() {
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                    onClick={() => handleSort('submissionDate')}>
+                  <div className="flex items-center">
+                    Submission Date
+                    {sortField === 'submissionDate' ? (
+                      sortDirection === 'asc' ? <FaSortUp className="ml-1" /> : <FaSortDown className="ml-1" />
+                    ) : (
+                      <FaSort className="ml-1" />
+                    )}
+                  </div>
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
                     onClick={() => handleSort('estimatedEndDate')}>
@@ -226,9 +267,6 @@ export default function SupervisorComplaintsList() {
               {currentItems.map((complaint, index) => (
                 <tr key={complaint.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {complaint.userName}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {complaint.title}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -243,6 +281,9 @@ export default function SupervisorComplaintsList() {
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(complaint.status)}`}>
                       {complaint.status}
                     </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {complaint.submissionDate}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {complaint.estimatedEndDate}
@@ -338,17 +379,11 @@ export default function SupervisorComplaintsList() {
       {selectedComplaint && (
         <>
           <TrackStatusModal 
+            role="supervisor"
             isOpen={isTrackModalOpen}
             onClose={() => setIsTrackModalOpen(false)}
-            complaintId={selectedComplaint.id.toString()}
-            statusSteps={[
-              { status: 'Submitted', date: selectedComplaint.submissionDate, completed: true },
-              { status: 'Inspected', date: '', completed: selectedComplaint.status !== 'Not Inspected' },
-              { status: 'Ongoing', date: '', completed: selectedComplaint.status === 'Ongoing' },
-              { status: selectedComplaint.status === 'Rejected' ? 'Rejected' : 'Completed', 
-                date: '', 
-                completed: selectedComplaint.status === 'Completed' || selectedComplaint.status === 'Rejected' }
-            ]}
+            complaintId={selectedComplaint.title}
+            statusSteps={selectedComplaint.statusTimeline}
             currentStatus={selectedComplaint.status}
           />
 
@@ -358,10 +393,9 @@ export default function SupervisorComplaintsList() {
             complaintId={selectedComplaint.id.toString()}
             currentStatus={selectedComplaint.status}
             complaintSeverity={selectedComplaint.severity}
-            onStatusUpdate={() => {
-              // Refresh complaints data
-              setComplaints(generateDummyData());
-            }}
+            estend={selectedComplaint.estimatedEndDate}
+            estexp={selectedComplaint.estimatedExpense.toString()}
+            onSuccess ={() => token && fetchComplaints(token)}
           />
         </>
       )}

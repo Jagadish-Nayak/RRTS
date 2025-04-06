@@ -21,7 +21,7 @@ export function ImageGalleryModal({ isOpen, onClose, images, complaintTitle }: I
       onClick={onClose}
     >
       <div 
-        className="bg-white rounded-lg shadow-xl w-full max-w-fit mx-4"
+        className="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4"
         onClick={preventPropagation}
       >
         <div className="flex justify-between items-center p-4 border-b">

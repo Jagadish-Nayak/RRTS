@@ -2,13 +2,14 @@
 import { useState, useEffect } from 'react';
 import { FaStar, FaStarHalf, FaRegStar, FaUser } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
-
+import axios from 'axios';
+import Loading from '@/components/Loading';
+import { toast } from 'react-hot-toast';
 interface Feedback {
-  id: number;
-  userId: number;
+  id: string;
+  userId: string;
   userName: string;
-  userAvatar: React.ReactNode;
-  complaintId: number;
+  complaintId: string;
   rating: number;
   feedback: string;
   date: string;
@@ -16,34 +17,55 @@ interface Feedback {
 }
 
 // Dummy data generator
-const generateDummyFeedbacks = (): Feedback[] => {
-  return Array.from({ length: 20 }, (_, i) => ({
-    id: i + 1,
-    userId: i + 100,
-    userName: `User ${i + 1}`,
-    userAvatar: <FaUser className="text-gray-600 h-16 w-16" />  , // You'll need to add actual avatar images
-    complaintId: 1000 + i,
-    rating: Math.random() * 2 + 3, // Generates ratings between 3 and 5
-    feedback: `This is a feedback for complaint #${1000 + i}. The service was ${
-      Math.random() > 0.5 ? 'excellent' : 'good'
-    } and the issue was resolved promptly.`,
-    date: new Date(2024, 0, 1 + i).toLocaleDateString('en-US', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
-    })
-  }));
-};
+// const generateDummyFeedbacks = (): Feedback[] => {
+//   return Array.from({ length: 20 }, (_, i) => ({
+//     id: i + 1,
+//     userId: i + 100,
+//     userName: `User ${i + 1}`,
+//     userAvatar: <FaUser className="text-gray-600 h-16 w-16" />  , // You'll need to add actual avatar images
+//     complaintId: 1000 + i,
+//     rating: Math.random() * 2 + 3, // Generates ratings between 3 and 5
+//     feedback: `This is a feedback for complaint #${1000 + i}. The service was ${
+//       Math.random() > 0.5 ? 'excellent' : 'good'
+//     } and the issue was resolved promptly.`,
+//     date: new Date(2024, 0, 1 + i).toLocaleDateString('en-US', {
+//       day: 'numeric',
+//       month: 'short',
+//       year: 'numeric'
+//     })
+//   }));
+// };
 
 export default function SupervisorFeedbacks() {
   const router = useRouter();
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
   const [sortType, setSortType] = useState<'recent' | 'highRating' | 'lowRating'>('recent');
-  const [focusedFeedback, setFocusedFeedback] = useState<number | null>(null);
+  const [focusedFeedback, setFocusedFeedback] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const data = generateDummyFeedbacks();
-    setFeedbacks(data);
+    const fetchFeedbacks = async () => {
+      const token = localStorage.getItem('token');
+      try{
+        setIsLoading(true);
+        const response = await axios.get('/api/supervisor/feedbacks',{
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const data = response.data;
+        //console.log(data);
+        setFeedbacks(data.data);
+      }
+      catch(error){
+        console.error('Error fetching feedbacks:', error);
+        toast.error('Error fetching feedbacks');
+      }
+      finally{
+        setIsLoading(false);
+      }
+    };
+    fetchFeedbacks();
   }, []);
 
   const calculateAverageRating = () => {
@@ -86,6 +108,15 @@ export default function SupervisorFeedbacks() {
   };
 
   return (
+    isLoading ? <Loading /> :
+    feedbacks.length === 0 ? (
+      <div className="max-h-screen bg-gray-50 p-4 md:p-8">
+        <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Feedback</h2>
+          <p className="text-gray-600">No Feedbacks Available.</p>
+        </div>
+      </div>
+    ) :
     <div className="flex flex-col lg:flex-row gap-6 p-4 sm:p-6">
       {/* Left Column - Feedback List */}
       <div className="lg:w-2/3 space-y-4 overflow-y-auto max-h-[calc(100vh-12rem)]">
@@ -103,7 +134,7 @@ export default function SupervisorFeedbacks() {
             <div className="flex items-start gap-4">
               <div className="flex-shrink-0">
                 <div className="relative w-12 h-12 bg-gray-200 flex justify-center items-center rounded-full overflow-hidden">
-                  {feedback.userAvatar}
+                  <FaUser className="text-gray-600 h-12 w-12" />
                 </div>
                 <p className="text-sm text-gray-500 mt-2">{feedback.date}</p>
               </div>

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { FaUser } from "react-icons/fa";
 import { menuItems } from "@/data/menu";
 import LogoutModal from "@/components/dashboard/LogoutModal";
+import { usePathname } from "next/navigation";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -12,7 +13,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
-  
+  const pathname = usePathname(); // Get current path
   const [role, setRole] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
@@ -125,7 +126,9 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                             <Link
                               onClick={()=>{if(isOpen){ setIsOpen(false)}}}
                               href={item.href.startsWith("/") ? `/${role}${item.href}` : item.href}
-                              className="flex items-center justify-center lg:justify-start gap-4 text-gray-500 py-3 md:px-2 rounded-md hover:bg-[#e6f4fb] hover:text-[#00ABE4] transition-colors"
+                              className={`flex items-center justify-center lg:justify-start gap-4  py-3 md:px-2 rounded-md hover:bg-[#e6f4fb]  hover:text-[#00ABE4] transition-colors ${
+                                pathname === `/${role}${item.href === "/" ? "" : item.href}` ? "bg-[#e6f4fb] text-[#00ABE4] font-semibold" : "text-gray-500"
+                              }`}
                             >
                               <div className="flex items-center justify-center">
                                 <span className="h-6 w-6 mr-2">{item.icon}</span>

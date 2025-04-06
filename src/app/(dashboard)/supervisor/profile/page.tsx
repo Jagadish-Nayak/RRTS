@@ -14,60 +14,59 @@ import {
 import { MdFeedback } from 'react-icons/md';
 import { BsCheckAll } from 'react-icons/bs';
 import StatCard from '@/components/dashboard/StatCard';
+import Loading from '@/components/Loading';
 
 interface SupervisorProfile {
-  firstName: string;
-  lastName: string;
+  fullName: string;
   employeeId: string;
   dob: string;
-  gender: string;
   email: string;
   phone: string;
   pincode: string;
   address: string;
   avatar?: string;
-  rating: number;
-  completedTasks: number;
-  totalFeedbacks: number;
 }
 
 export default function SupervisorProfilePage() {
+  const [name, setName] = useState('');
+  const [id, setId] = useState('');
+  const [rating, setRating] = useState(0);
+  const [completedTasks, setCompletedTasks] = useState(0);
+  const [totalFeedbacks, setTotalFeedbacks] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState<SupervisorProfile | null>(null);
   const [formData, setFormData] = useState<SupervisorProfile | null>(null);
   const [errors, setErrors] = useState({
-    firstName: '',
-    lastName: '',
+    fullName: '',
     dob: '',
-    gender: '',
     phone: '',
     address: ''
   });
 
   const fetchProfile = useCallback(async (token: string) => {
     try {
-      toast.loading('Loading profile...');
-      console.log(token);
-    //   const response = await axios.get('/api/supervisor/profile', {
-    //     headers: { Authorization: `Bearer ${token}` },
-    //   });
-      const data = {
-        firstName: 'John',
-        lastName: 'Doe',
-        employeeId: '1234567890',
-        dob: '1990-01-01',
-        gender: 'Male',
-        phone: '1234567890',
-        address: '123 Main St, Anytown, USA',
-        email: 'john.doe@example.com',
-        pincode: '123456',
-        rating: 4.5,
-        completedTasks: 100,
-        totalFeedbacks: 50,
+      const response = await axios.get('/api/supervisor/profile', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = response.data;
+      //console.log(data);
+      const profileData : SupervisorProfile = {
+        fullName: data.data.supervisor.username,
+        employeeId: data.data.supervisor.id,
+        dob: new Date(data.data.supervisor.dob).toISOString().split('T')[0],
+        email: data.data.supervisor.email,
+        phone: data.data.supervisor.phone,
+        address: data.data.supervisor.address || '',
+        pincode: data.data.supervisor.pincode,
       }
-      setProfile(data);
-      setFormData(data);
-      toast.dismiss();
+      setName(data.data.supervisor.username);
+      setRating(data.data.averageRating);
+      setCompletedTasks(data.data.completedComplaints);
+      setTotalFeedbacks(data.data.supervisor.feedbacks.length);
+      setId(data.data.supervisor.id);
+      //console.log(profileData);
+      setProfile(profileData);
+      setFormData(profileData);
     } catch (error) {
       console.error('Error fetching profile:', error);
       toast.error('Failed to load profile');
@@ -115,26 +114,17 @@ export default function SupervisorProfilePage() {
     let valid = true;
     const newErrors = { ...errors };
     
-    if (!formData?.firstName.trim()) {
-      newErrors.firstName = 'First name is required';
+    if (!formData?.fullName.trim()) {
+      newErrors.fullName = 'Full name is required';
       valid = false;
     }
     
-    if (!formData?.lastName.trim()) {
-      newErrors.lastName = 'Last name is required';
-      valid = false;
-    }
     
     if (!formData?.dob) {
       newErrors.dob = 'Date of birth is required';
       valid = false;
     }
-    
-    if (!formData?.gender) {
-      newErrors.gender = 'Please select a gender';
-      valid = false;
-    }
-    
+
     if (!formData?.phone) {
       newErrors.phone = 'Phone number is required';
       valid = false;
@@ -161,7 +151,12 @@ export default function SupervisorProfilePage() {
         headers: { Authorization: `Bearer ${token}` },
       });
       setProfile(response.data);
+      setName(response.data.username);
+      console.log(profile);
       setIsEditing(false);
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      user.username = response.data.username;
+      localStorage.setItem('user', JSON.stringify(user));
       toast.success('Profile updated successfully');
     } catch (error) {
       let errorMessage = 'Failed to update profile';
@@ -172,7 +167,7 @@ export default function SupervisorProfilePage() {
     }
   };
 
-  if (!profile || !formData) return <div>Loading...</div>;
+  if (!profile || !formData) return <Loading />;
 
   return (
     <div className="h-max md:max-h-screen bg-gray-50 text-gray-700">
@@ -204,28 +199,28 @@ export default function SupervisorProfilePage() {
 
                 {/* Name and Rating */}
                 <h3 className="mt-4 text-xl font-semibold text-gray-800">
-                  {profile.firstName} {profile.lastName}
+                  {name}  
                 </h3>
                 <div className="flex items-center gap-1 mt-2">
-                  {renderStars(profile.rating)}
+                  {renderStars(rating)}
                 </div>
                 
                 {/* Employee ID */}
                 <div className="mt-2 text-gray-600">
-                  Employee ID: {profile.employeeId}
+                  Employee ID: {id}
                 </div>
 
                 {/* Stats Cards */}
                 <div className="mt-6 flex flex-col gap-4 w-full">
                   <StatCard 
                     title="Completed Tasks" 
-                    value={profile.completedTasks} 
+                    value={completedTasks} 
                     icon={<BsCheckAll size={24} />} 
                     bgColor="bg-green-500"
                   />
                   <StatCard 
                     title="Total Feedbacks" 
-                    value={profile.totalFeedbacks} 
+                    value={totalFeedbacks} 
                     icon={<MdFeedback size={24} />} 
                     bgColor="bg-purple-500"
                   />
@@ -250,10 +245,8 @@ export default function SupervisorProfilePage() {
                         setIsEditing(false);
                         setFormData(profile);
                         setErrors({
-                          firstName: '',
-                          lastName: '',
+                          fullName: '',
                           dob: '',
-                          gender: '',
                           phone: '',
                           address: ''
                         });
@@ -276,33 +269,17 @@ export default function SupervisorProfilePage() {
                 {/* Name Fields */}
                 <div className="flex gap-4">
                   <div className="w-1/2">
-                    <label className="block text-gray-700 font-medium mb-2">First Name</label>
+                    <label className="block text-gray-700 font-medium mb-2">Full Name</label>
                     <input
                       type="text"
-                      name="firstName"
-                      value={formData.firstName}
+                      name="fullName"
+                      value={formData.fullName}
                       onChange={handleChange}
                       disabled={!isEditing}
-                      className={`w-full px-4 py-2 border ${errors.firstName ? 'border-red-500' : 'border-gray-300'} rounded-md ${!isEditing && 'bg-gray-50'}`}
+                      className={`w-full px-4 py-2 border ${errors.fullName ? 'border-red-500' : 'border-gray-300'} rounded-md ${!isEditing && 'bg-gray-50'}`}
                     />
-                    {errors.firstName && <p className="mt-1 text-red-500 text-sm">{errors.firstName}</p>}
+                    {errors.fullName && <p className="mt-1 text-red-500 text-sm">{errors.fullName}</p>}
                   </div>
-                  <div className="w-1/2">
-                    <label className="block text-gray-700 font-medium mb-2">Last Name</label>
-                    <input
-                      type="text"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleChange}
-                      disabled={!isEditing}
-                      className={`w-full px-4 py-2 border ${errors.lastName ? 'border-red-500' : 'border-gray-300'} rounded-md ${!isEditing && 'bg-gray-50'}`}
-                    />
-                    {errors.lastName && <p className="mt-1 text-red-500 text-sm">{errors.lastName}</p>}
-                  </div>
-                </div>
-
-                {/* Read-only Fields */}
-                <div className="flex gap-4">
                   <div className="w-1/2">
                     <label className="block text-gray-700 font-medium mb-2">Employee ID</label>
                     <input
@@ -312,6 +289,10 @@ export default function SupervisorProfilePage() {
                       className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50"
                     />
                   </div>
+                </div>
+
+                {/* Read-only Fields */}
+                <div className="flex gap-4">
                   <div className="w-1/2">
                     <label className="block text-gray-700 font-medium mb-2">Email</label>
                     <input
@@ -321,10 +302,6 @@ export default function SupervisorProfilePage() {
                       className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50"
                     />
                   </div>
-                </div>
-
-                {/* Date of Birth and Gender */}
-                <div className="flex gap-4">
                   <div className="w-1/2">
                     <label className="block text-gray-700 font-medium mb-2">Date of Birth</label>
                     <input
@@ -338,22 +315,8 @@ export default function SupervisorProfilePage() {
                     />
                     {errors.dob && <p className="mt-1 text-red-500 text-sm">{errors.dob}</p>}
                   </div>
-                  <div className="w-1/2">
-                    <label className="block text-gray-700 font-medium mb-2">Gender</label>
-                    <select
-                      name="gender"
-                      value={formData.gender}
-                      onChange={handleChange}
-                      disabled={!isEditing}
-                      className={`w-full px-4 py-2 border ${errors.gender ? 'border-red-500' : 'border-gray-300'} rounded-md ${!isEditing && 'bg-gray-50'}`}
-                    >
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                      <option value="other">Other</option>
-                    </select>
-                    {errors.gender && <p className="mt-1 text-red-500 text-sm">{errors.gender}</p>}
-                  </div>
                 </div>
+
 
                 {/* Phone and Pincode */}
                 <div className="flex gap-4">
@@ -388,6 +351,7 @@ export default function SupervisorProfilePage() {
                     value={formData.address}
                     onChange={handleChange}
                     disabled={!isEditing}
+                    placeholder="Enter your address..."
                     className={`w-full px-4 py-2 border ${errors.address ? 'border-red-500' : 'border-gray-300'} rounded-md ${!isEditing && 'bg-gray-50'}`}
                     rows={3}
                   />

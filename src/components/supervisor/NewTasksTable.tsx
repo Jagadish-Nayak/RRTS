@@ -10,16 +10,17 @@ interface Task {
   title: string;
   location: string;
   severity: 'High' | 'Medium' | 'Low';
-  status: string;
   images: string[];
 }
 
+
 interface NewTasksTableProps {
   tasks: Task[];
-  onStatusUpdate: () => void;
+  onSuccess: () => void;
 }
 
-export function NewTasksTable({ tasks, onStatusUpdate }: NewTasksTableProps) {
+export function NewTasksTable({ tasks, onSuccess }: NewTasksTableProps) {
+  //console.log(tasks);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [showImageModal, setShowImageModal] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
@@ -34,8 +35,11 @@ export function NewTasksTable({ tasks, onStatusUpdate }: NewTasksTableProps) {
 
   return (
     <>
-      <div className="bg-white rounded-lg shadow-md p-4">
+      <div className="bg-white text-gray-600 rounded-lg shadow-md p-4">
         <h3 className="text-lg font-semibold mb-4">New Tasks</h3>
+        {tasks.length === 0 ? (
+  <div className="text-center text-gray-500 py-8">No New Complaint Assigned</div>
+) :(
         <div className="overflow-x-auto w-[80vw] md:w-[50vw] lg:w-max">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -43,7 +47,7 @@ export function NewTasksTable({ tasks, onStatusUpdate }: NewTasksTableProps) {
                 {['User Name', 'Phone', 'Title', 'Location', 'Severity', 'Actions'].map(header => (
                   <th
                     key={header}
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
                     {header}
                   </th>
@@ -53,24 +57,24 @@ export function NewTasksTable({ tasks, onStatusUpdate }: NewTasksTableProps) {
             <tbody className="bg-white divide-y divide-gray-200">
               {tasks.map((task, index) => (
                 <tr key={task.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <td className="px-5 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {task.userName}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-500">
                     {task.phone}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-900">
                     {task.title}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-500">
                     {task.location}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-5 py-4 whitespace-nowrap">
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getSeverityColor(task.severity)}`}>
                       {task.severity}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-500">
                     <div className="flex space-x-3">
                       <button
                         onClick={() => {
@@ -99,8 +103,8 @@ export function NewTasksTable({ tasks, onStatusUpdate }: NewTasksTableProps) {
             </tbody>
           </table>
         </div>
+        )}
       </div>
-
       {/* Modals */}
       {selectedTask && (
         <>
@@ -116,8 +120,8 @@ export function NewTasksTable({ tasks, onStatusUpdate }: NewTasksTableProps) {
             onClose={() => setShowStatusModal(false)}
             complaintId={selectedTask.id}
             complaintSeverity={selectedTask.severity}
-            currentStatus={selectedTask.status}
-            onStatusUpdate={onStatusUpdate}
+            currentStatus="Not Inspected"
+            onSuccess={onSuccess}
           />
         </>
       )}

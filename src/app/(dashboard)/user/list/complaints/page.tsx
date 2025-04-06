@@ -6,50 +6,57 @@ import { GiProgression } from 'react-icons/gi';
 import { useRouter } from 'next/navigation';
 import TrackStatusModal from '@/components/complaint/TrackStatusModal';
 import { MdFeedback } from 'react-icons/md';
-
+import axios from 'axios';
+import Loading from '@/components/Loading';
 // Define types for our complaint data
 interface Complaint {
-  id: number;
+  id: string;
   title: string;
   location: string;
   submissionDate: string;
-  status: 'Not Inspected' | 'Inspected' | 'Ongoing' | 'Completed' | 'Rejected';
+  status: 'Submitted' | 'Supervisor Assigned' | 'Inspected' | 'Ongoing' | 'Completed' | 'Rejected';
   supervisor: string;
   severity: 'Low' | 'Medium' | 'High';
   estimatedEndDate: string;
+  feedback: boolean;
+  statusTimeline: {
+    status: string;
+    date: string;
+    completed: boolean;
+  }[];
 }
 
 
 
 // Generate dummy data for the complaints
-const generateDummyData = (): Complaint[] => {
-  const statuses: Complaint['status'][] = ['Not Inspected', 'Inspected', 'Ongoing', 'Completed', 'Rejected'];
-  const severities: Complaint['severity'][] = ['Low', 'Medium', 'High'];
+// const generateDummyData = (): Complaint[] => {
+//   const statuses: Complaint['status'][] = ['Submitted', 'Supervisor Assigned', 'Inspected', 'Ongoing', 'Completed', 'Rejected'];
+//   const severities: Complaint['severity'][] = ['Low', 'Medium', 'High'];
   
-  return Array.from({ length: 30 }, (_, i) => {
-    const status = statuses[Math.floor(Math.random() * statuses.length)];
-    const isNotInspected = status === 'Not Inspected';
+//   return Array.from({ length: 30 }, (_, i) => {
+//     const status = statuses[Math.floor(Math.random() * statuses.length)];
+//     const isNotInspected = status === 'Not Inspected';
     
-    return {
-      id: i + 1,
-      title: `Road damage complaint ${i + 1}`.length > 25 
-             ? `Road damage complaint ${i + 1}`.substring(0, 22) + '...' 
-             : `Road damage complaint ${i + 1}`,
-      location: `Sector ${Math.floor(Math.random() * 100)}, Block ${String.fromCharCode(65 + Math.floor(Math.random() * 26))}, New Delhi`,
-      submissionDate: new Date(2023, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString().split('T')[0],
-      status,
-      supervisor: isNotInspected ? '' : `John Doe ${i + 1}`,
-      severity: isNotInspected ? 'Low' : severities[Math.floor(Math.random() * severities.length)],
-      estimatedEndDate: isNotInspected ? '' : new Date(2023, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString().split('T')[0]
-    };
-  });
-};
+//     return {
+//       id: i + 1,
+//       title: `Road damage complaint ${i + 1}`.length > 25 
+//              ? `Road damage complaint ${i + 1}`.substring(0, 22) + '...' 
+//              : `Road damage complaint ${i + 1}`,
+//       location: `Sector ${Math.floor(Math.random() * 100)}, Block ${String.fromCharCode(65 + Math.floor(Math.random() * 26))}, New Delhi`,
+//       submissionDate: new Date(2023, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString().split('T')[0],
+//       status,
+//       supervisor: isNotInspected ? '' : `John Doe ${i + 1}`,
+//       severity: isNotInspected ? 'Low' : severities[Math.floor(Math.random() * severities.length)],
+//       estimatedEndDate: isNotInspected ? '' : new Date(2023, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString().split('T')[0]
+//     };
+//   });
+// };
 
 export default function ComplaintsList() {
   // State for the complaints data
   const router = useRouter();
   const [complaints, setComplaints] = useState<Complaint[]>([]);
-  
+  const [isLoading, setIsLoading] = useState(false); 
   // State for search and filters
   const [searchTerm, setSearchTerm] = useState('');
   const [severityFilter, setSeverityFilter] = useState('');
@@ -58,7 +65,6 @@ export default function ComplaintsList() {
   // State for sorting
   const [sortField, setSortField] = useState<'submissionDate' | 'estimatedEndDate'>('submissionDate');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
-  
   // State for pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
@@ -69,7 +75,20 @@ export default function ComplaintsList() {
   
   // Initialize dummy data
   useEffect(() => {
-    setComplaints(generateDummyData());
+    const fetchComplaints = async () => {
+      setIsLoading(true);
+      const response = await axios.get('/api/user/complaints/all',{
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      const data = response.data;
+      //console.log(data.complaints);
+      
+      setComplaints(data.complaints);
+      setIsLoading(false);
+    };
+    fetchComplaints();
   }, []);
   
   // Handle sorting logic
@@ -85,9 +104,10 @@ export default function ComplaintsList() {
   // Get status color based on status value
   const getStatusColor = (status: Complaint['status']) => {
     switch (status) {
-      case 'Not Inspected': return 'bg-gray-100 text-gray-800';
-      case 'Inspected': return 'bg-blue-100 text-blue-800';
-      case 'Ongoing': return 'bg-yellow-100 text-yellow-800';
+      case 'Submitted': return 'bg-gray-100 text-gray-800';
+      case 'Supervisor Assigned': return 'bg-blue-100 text-blue-800';
+      case 'Inspected': return 'bg-yellow-100 text-yellow-800';
+      case 'Ongoing': return 'bg-orange-100 text-orange-800';
       case 'Completed': return 'bg-green-100 text-green-800';
       case 'Rejected': return 'bg-red-100 text-red-800';
     }
@@ -149,7 +169,8 @@ export default function ComplaintsList() {
     pageNumbers.push(i);
   }
   return (
-    <div className="w-full text-gray-600">
+    isLoading ? <Loading /> :
+    (<div className="w-full text-gray-600">
       <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
           <h1 className="text-2xl font-bold text-gray-800">All Complaints</h1>
@@ -201,7 +222,8 @@ export default function ComplaintsList() {
               onChange={(e) => setStatusFilter(e.target.value)}
             >
               <option value="">All</option>
-              <option value="Not Inspected">Not Inspected</option>
+              <option value="Submitted">Submitted</option>
+              <option value="Supervisor Assigned">Supervisor Assigned</option>
               <option value="Inspected">Inspected</option>
               <option value="Ongoing">Ongoing</option>
               <option value="Completed">Completed</option>
@@ -324,13 +346,11 @@ export default function ComplaintsList() {
                       {complaint.supervisor || '-'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {complaint.severity !== 'Low' || complaint.status !== 'Not Inspected' ? (
+        
                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getSeverityColor(complaint.severity)}`}>
                           {complaint.severity}
                         </span>
-                      ) : (
-                        '-'
-                      )}
+                      
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {complaint.estimatedEndDate || '-'}
@@ -359,14 +379,13 @@ export default function ComplaintsList() {
 
                         {/* Give Feedback Button */}
                         <button
-                          className={`ml-4 transition-colors ${
-                            complaint.status === "Completed"
-                              ? "cursor-pointer text-amber-700 hover:text-amber-900"
-                              : "cursor-not-allowed text-gray-400"
+                          className={`ml-4 transition-colors
+                              cursor-pointer text-amber-700 hover:text-amber-900
+                              disabled:cursor-not-allowed disabled:text-gray-400
                           }`}
                           title="Give Feedback"
-                          disabled={complaint.status !== "Completed"}
-                          onClick={() => {if(complaint.status === 'Completed') router.push(`/user/feedback/${complaint.id}.toString()`)}}
+                          disabled={complaint.status !== "Completed" || complaint.feedback === true}
+                          onClick={() => {if(complaint.status === 'Completed' && complaint.feedback === false) router.push(`/user/feedback/${complaint.id}`)}}
                         >
                           <MdFeedback size={18} />
                         </button>
@@ -448,20 +467,15 @@ export default function ComplaintsList() {
         //   estimatedCompletionDate={selectedComplaint.estimatedCompletionDate}
         // />
         <TrackStatusModal 
+        role="user"
         isOpen={isTrackModalOpen} 
         onClose={() => setIsTrackModalOpen(false)}
-        complaintId={selectedComplaint.id.toString()}
-        statusSteps={[
-          { status: 'Submitted', date: '2023-07-15', completed: true },
-          { status: 'Supervisor Assigned', date: '2023-07-16', completed: true },
-          { status: 'Inspected', date: '2023-07-18', completed: true },
-          { status: 'Ongoing', date: '2023-07-22', completed: true },
-          { status: 'Completed', date: '2023-08-25', completed: true }
-        ]}
+        complaintId={selectedComplaint.title}
+        statusSteps={selectedComplaint.statusTimeline}
         estimatedCompletionDate={selectedComplaint.estimatedEndDate}
         currentStatus={selectedComplaint.status}
       />
       )}
     </div>
-  );
+  ));
 }

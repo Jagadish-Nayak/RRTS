@@ -19,7 +19,7 @@ const feedbackSchema = new Schema({
       min: 1,
       max: 5
    },
-   description: {
+   message: {
       type: String,
       trim: true
    }

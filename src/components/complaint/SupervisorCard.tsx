@@ -46,7 +46,7 @@ import {
           <h3 className="text-xl font-medium text-gray-800">{name}</h3>
           <div className="mt-2">
             {renderRatingStars(rating)}
-            <span className="text-sm text-gray-600 mt-1 block text-center">{rating.toFixed(1)} / 5.0</span>
+            <span className="text-sm text-gray-600 mt-1 block text-center">{rating} / 5.0</span>
           </div>
         </div>
         

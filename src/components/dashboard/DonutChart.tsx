@@ -6,11 +6,13 @@ interface DonutChartProps {
     value: number;
     color: string;
   }[];
+  total?: number;
   title?: string;
 }
 
-const DonutChart = ({ data, title }: DonutChartProps) => {
-  
+const DonutChart = ({ data, total, title }: DonutChartProps) => {
+  //console.log(data);
+  const num = total ? total : data.reduce((acc, curr) => acc + curr.value, 0);
   return (
     <div className="bg-white p-4 rounded-lg shadow-md">
       {title && <h3 className="text-lg font-medium mb-2 text-gray-700">{title}</h3>}
@@ -49,7 +51,7 @@ const DonutChart = ({ data, title }: DonutChartProps) => {
             ></div>
             <div className="text-xs font-medium">
               <div>{item.name}</div>
-              <div>{Math.round(item.value)}%</div>
+              <div>{Math.round((item.value/num)*100)}%</div>
             </div>
           </div>
         ))}

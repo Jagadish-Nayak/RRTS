@@ -18,6 +18,7 @@ import {
   
   export function StatusTimeline({ steps, estimatedCompletionDate, currentStatus }: StatusTimelineProps) {
     // Get status icon based on status name
+    console.log(steps);
     const getStatusIcon = (status: string, completed: boolean) => {
       const iconSize = "h-4 md:h-6 w-4 md:w-6";
       const activeColor = completed ? "text-white" : "text-gray-400";
@@ -49,7 +50,7 @@ import {
         
         {estimatedCompletionDate && (
           <div className="bg-blue-50 text-blue-800 p-3 rounded-md mb-6">
-            <p className="font-medium">Estimated Completion Date: {estimatedCompletionDate}</p>
+            <p className="font-medium">Estimated Completion Date: {estimatedCompletionDate === 'N/A' ? 'N/A' : new Date(estimatedCompletionDate).toLocaleDateString().split(' ')[0]}</p>
           </div>
         )}
         
@@ -71,7 +72,7 @@ import {
           {/* Timeline Nodes */}
           <div className="relative flex justify-between">
             {steps.map((step, index) => {
-              const isActive = index <= currentIndex;
+              const isActive = index <= currentIndex || step.status === 'Submitted';
               const isRejected = step.status === 'Rejected' && isActive;
               
               return (

@@ -3,14 +3,22 @@ import {
     FaClipboardList,  
     FaUser,
     FaSignOutAlt,
+    FaHome,
   } from "react-icons/fa";
-import { MdManageAccounts, MdConstruction } from "react-icons/md";
+import { MdManageAccounts } from "react-icons/md";
 import { VscFeedback } from "react-icons/vsc";
+import { IoDocumentText } from "react-icons/io5";
 
 export const menuItems = [
     {
       title: "MENU",
       items: [
+        {
+          icon: <FaHome className="h-5 w-5" />,
+          label: "Home",
+          href: "/",
+          visible: ["user", "admin", "supervisor", "mayor"],
+        },
         {
           icon: <FaWpforms className="h-5 w-5" />,
           label: "Complaint",
@@ -42,10 +50,10 @@ export const menuItems = [
           visible: ["admin","mayor"],
         },
         {
-          icon: <MdConstruction className="h-5 w-5" />,
-          label: "Manage Resources",
-          href: "/list/resources",
-          visible: ["admin"],
+          icon: <IoDocumentText className="h-5 w-5" />,
+          label: "Report Submission",
+          href: "/report/1",
+          visible: ["supervisor"],
         },
       ],
     },

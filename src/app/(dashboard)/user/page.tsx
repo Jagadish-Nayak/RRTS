@@ -1,99 +1,147 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FaUsers, FaMoneyBillWave, FaChartPie, FaUserTie, FaTachometerAlt, FaClipboardList} from 'react-icons/fa';
+import { FaTachometerAlt, FaClipboardList, FaCheckCircle, FaCommentDots, FaUserShield} from 'react-icons/fa';
 import StatCard from '@/components/dashboard/StatCard';
 import DonutChart from '@/components/dashboard/DonutChart';
 import SupervisorList from '@/components/dashboard/SupervisorList';
 import Announcements from '@/components/dashboard/Announcements';
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
+import Loading from '@/components/Loading';
+
+
 
 export default function UserDashboard() {
   // State for animated statistics
   const [isClient, setIsClient] = useState(false);
-  
+  const [allSupervisors, setAllSupervisors] = useState([]);
+  const [allMessages, setAllMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [completedComplaints, setCompletedComplaints] = useState(0);
+  const [pendingComplaints, setPendingComplaints] = useState(0);
+  const [ongoingComplaints, setOngoingComplaints] = useState(0);
+  const [rejectedComplaints, setRejectedComplaints] = useState(0);
+  const [totalFeedbacks, setTotalFeedbacks] = useState(0);
+  const [totalComplaints, setTotalComplaints] = useState(0);
   // Use useEffect to avoid hydration mismatch
+  const bgColors = ['bg-blue-50 border-blue-200','bg-red-50 border-red-200', 'bg-green-50 border-green-200','bg-yellow-50 border-yellow-200', 'bg-purple-50 border-purple-200',];
   useEffect(() => {
+    const fetchData = async () => {
+      try{
+        setLoading(true);
+          const token = localStorage.getItem('token');
+          const response = await axios.get('/api/user/home',{
+            headers:{
+              Authorization: `Bearer ${token}`
+            }
+          });
+          const data = response.data;
+          //console.log(data);
+          if (data.success) {
+            const stats = data.data;
+            setCompletedComplaints(stats.completedComplaints);
+            setPendingComplaints(stats.pendingComplaints);
+            setOngoingComplaints(stats.ongoingComplaints);
+            setRejectedComplaints(stats.rejectedComplaints);
+            setTotalComplaints(stats.totalComplaints);
+            setTotalFeedbacks(stats.totalFeedbacks);
+            setAllSupervisors(stats.allSupervisors);
+            for(let i=0;i<stats.allMessages.length;i++){
+              stats.allMessages[i].bgColor = bgColors[i%bgColors.length];
+            }
+            setAllMessages(stats.allMessages);
+          }
+      }catch(error){
+          console.error('Error fetching data:', error);
+          toast.error('Error fetching data');
+      }finally{
+        setLoading(false);
+      }
+    };
+    fetchData();
     setIsClient(true);
   }, []);
   
   // Dummy data for donut chart
-  const deviceData = [
-    { name: 'Completed', value: 40, color: '#8884d8' },
-    { name: 'Pending', value: 30, color: '#00C49F' },
-    { name: 'Ongoing', value: 20, color: '#FFBB28' },
-    { name: 'Rejected', value: 10, color: '#1167b1' }
+  const complaintStatusData = [
+    { name: 'Completed', value: completedComplaints, color: '#8884d8' },
+    { name: 'Pending', value: pendingComplaints, color: '#00C49F' },
+    { name: 'Ongoing', value: ongoingComplaints, color: '#FFBB28' },
+    { name: 'Rejected', value: rejectedComplaints, color: '#1167b1' }
   ];
   
   
   // Dummy data for supervisors
-  const supervisorsData = [
-    { id: 1, name: 'John Smith', contactNumber: '123-456-7890' },
-    { id: 2, name: 'Emily Johnson', contactNumber: '234-567-8901' },
-    { id: 3, name: 'Michael Brown', contactNumber: '345-678-9012' },
-    { id: 4, name: 'Sarah Davis', contactNumber: '456-789-0123' },
-  ];
+  // const supervisorsData = [
+  //   { id: 1, name: 'John Smith', contactNumber: '123-456-7890' },
+  //   { id: 2, name: 'Emily Johnson', contactNumber: '234-567-8901' },
+  //   { id: 3, name: 'Michael Brown', contactNumber: '345-678-9012' },
+  //   { id: 4, name: 'Sarah Davis', contactNumber: '456-789-0123' },
+  // ];
   
   // Dummy data for announcements
-  const announcements = [
-    {
-      id: 1,
-      title: 'System Maintenance',
-      content: 'The system will be under maintenance on July 15th from 2 AM to 5 AM.',
-      date: 'July 10, 2023',
-      bgColor: 'bg-blue-50 border-blue-200'
-    },
-    {
-      id: 2,
-      title: 'New Feature Release',
-      content: 'We\'re excited to announce the release of our new reporting feature!',
-      date: 'July 8, 2023',
-      bgColor: 'bg-green-50 border-green-200'
-    },
-    {
-      id: 3,
-      title: 'Holiday Notice',
-      content: 'Our offices will be closed for the upcoming holiday on July 20th.',
-      date: 'July 5, 2023',
-      bgColor: 'bg-yellow-50 border-yellow-200'
-    },
-    {
-      id: 4,
-      title: 'Training Session',
-      content: 'Don\'t miss our upcoming training session on advanced reporting techniques.',
-      date: 'July 3, 2023',
-      bgColor: 'bg-purple-50 border-purple-200'
-    },
-    {
-      id: 5,
-      title: 'System Maintenance',
-      content: 'The system will be under maintenance on July 15th from 2 AM to 5 AM.',
-      date: 'July 10, 2023',
-      bgColor: 'bg-blue-50 border-blue-200'
-    },
-    {
-      id: 6,
-      title: 'New Feature Release',
-      content: 'We\'re excited to announce the release of our new reporting feature!',
-      date: 'July 8, 2023',
-      bgColor: 'bg-green-50 border-green-200'
-    },
-    {
-      id: 7,
-      title: 'Holiday Notice',
-      content: 'Our offices will be closed for the upcoming holiday on July 20th.',
-      date: 'July 5, 2023',
-      bgColor: 'bg-yellow-50 border-yellow-200'
-    },
-    {
-      id: 8,
-      title: 'Training Session',
-      content: 'Don\'t miss our upcoming training session on advanced reporting techniques.',
-      date: 'July 3, 2023',
-      bgColor: 'bg-purple-50 border-purple-200'
-    }
-  ];
+  // const announcements = [
+  //   {
+  //     id: 1,
+  //     title: 'System Maintenance',
+  //     content: 'The system will be under maintenance on July 15th from 2 AM to 5 AM.',
+  //     date: 'July 10, 2023',
+  //     bgColor: 'bg-blue-50 border-blue-200'
+  //   },
+  //   {
+  //     id: 2,
+  //     title: 'New Feature Release',
+  //     content: 'We\'re excited to announce the release of our new reporting feature!',
+  //     date: 'July 8, 2023',
+  //     bgColor: 'bg-green-50 border-green-200'
+  //   },
+  //   {
+  //     id: 3,
+  //     title: 'Holiday Notice',
+  //     content: 'Our offices will be closed for the upcoming holiday on July 20th.',
+  //     date: 'July 5, 2023',
+  //     bgColor: 'bg-yellow-50 border-yellow-200'
+  //   },
+  //   {
+  //     id: 4,
+  //     title: 'Training Session',
+  //     content: 'Don\'t miss our upcoming training session on advanced reporting techniques.',
+  //     date: 'July 3, 2023',
+  //     bgColor: 'bg-purple-50 border-purple-200'
+  //   },
+  //   {
+  //     id: 5,
+  //     title: 'System Maintenance',
+  //     content: 'The system will be under maintenance on July 15th from 2 AM to 5 AM.',
+  //     date: 'July 10, 2023',
+  //     bgColor: 'bg-blue-50 border-blue-200'
+  //   },
+  //   {
+  //     id: 6,
+  //     title: 'New Feature Release',
+  //     content: 'We\'re excited to announce the release of our new reporting feature!',
+  //     date: 'July 8, 2023',
+  //     bgColor: 'bg-green-50 border-green-200'
+  //   },
+  //   {
+  //     id: 7,
+  //     title: 'Holiday Notice',
+  //     content: 'Our offices will be closed for the upcoming holiday on July 20th.',
+  //     date: 'July 5, 2023',
+  //     bgColor: 'bg-yellow-50 border-yellow-200'
+  //   },
+  //   {
+  //     id: 8,
+  //     title: 'Training Session',
+  //     content: 'Don\'t miss our upcoming training session on advanced reporting techniques.',
+  //     date: 'July 3, 2023',
+  //     bgColor: 'bg-purple-50 border-purple-200'
+  //   }
+  // ];
   
   return (
+    loading ? <Loading /> :
     <div className="space-y-8">
       {/* Top row - 4 stat cards */}
       <div>
@@ -105,27 +153,27 @@ export default function UserDashboard() {
           {isClient && (
             <>
               <StatCard 
-                title="Total Income" 
-                value={953000} 
-                icon={<FaMoneyBillWave size={24} />} 
+                title="Total Complaints" 
+                value={totalComplaints} 
+                icon={<FaClipboardList size={24} />} 
                 bgColor="bg-blue-500"
               />
               <StatCard 
-                title="Total Expense" 
-                value={236000} 
-                icon={<FaChartPie size={24} />} 
+                title="Completed Requests" 
+                value={completedComplaints} 
+                icon={<FaCheckCircle size={24} />} 
                 bgColor="bg-green-500"
               />
               <StatCard 
-                title="Total Assets" 
-                value={987563} 
-                icon={<FaUsers size={24} />} 
+                title="Total Feedbacks" 
+                value={totalFeedbacks} 
+                icon={<FaCommentDots size={24} />} 
                 bgColor="bg-purple-500"
               />
               <StatCard 
-                title="Total Staff" 
-                value={987563} 
-                icon={<FaUserTie size={24} />} 
+                title="Total Supervisors" 
+                value={allSupervisors.length} 
+                icon={<FaUserShield size={24} />} 
                 bgColor="bg-red-500"
               />
             </>
@@ -143,15 +191,15 @@ export default function UserDashboard() {
           {/* First column */}
           
             <DonutChart 
-              data={deviceData} 
-              title="Device Distribution"
+              data={complaintStatusData} 
+              title="Complaint Status"
             />
             <SupervisorList 
-              supervisors={supervisorsData} 
+              supervisors={allSupervisors} 
               title="Supervisor Directory"
             />
             <Announcements 
-              announcements={announcements} 
+              announcements={allMessages} 
               title="Recent Announcements"
             />
         </div>

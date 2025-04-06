@@ -104,7 +104,6 @@ export async function POST(request) {
     let user;
     
     if (role === 'user') {
-      // Check if identifier is an email or username
         user = await User.findOne({ email: `${identifier}@gmail.com` });
     } else if (role === 'supervisor') {
       // For supervisor, search by username

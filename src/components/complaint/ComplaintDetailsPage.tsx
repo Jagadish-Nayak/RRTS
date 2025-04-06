@@ -12,6 +12,8 @@ interface ComplaintDetails {
     title: string;
     description: string;
     location: string;
+    userName?: string;
+    phone?: string;
     pincode: string;
     severity: 'Low' | 'Medium' | 'High';
     status: 'Submitted' | 'Supervisor Assigned' | 'Inspected' | 'Ongoing' | 'Completed' | 'Rejected';
@@ -43,17 +45,17 @@ interface ComplaintDetails {
   }
 
 interface ComplaintDetailsPageProps {
-  role: 'user' | 'admin';
+  role: 'user' | 'admin' | 'supervisor' | 'mayor';
   complaint: ComplaintDetails; // Use your existing ComplaintDetails interface
-  onRefresh?: () => void;
+  onSuccess?: () => void;
 }
 
-export function ComplaintDetailsPage({ role, complaint, onRefresh }: ComplaintDetailsPageProps) {
+export function ComplaintDetailsPage({ role, complaint, onSuccess }: ComplaintDetailsPageProps) {
   const [showAssignSupervisor, setShowAssignSupervisor] = useState(false);
 
   const handleAssignmentComplete = () => {
     setShowAssignSupervisor(false);
-    onRefresh?.();
+    onSuccess?.();
   };
 
   return (
@@ -62,6 +64,9 @@ export function ComplaintDetailsPage({ role, complaint, onRefresh }: ComplaintDe
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <ImageGallery images={complaint.images} />
         <ComplaintDetailsCard 
+          role={role}
+          userName={complaint?.userName}
+          phone={complaint?.phone}
           title={complaint.title}
           description={complaint.description}
           location={complaint.location}
@@ -77,7 +82,7 @@ export function ComplaintDetailsPage({ role, complaint, onRefresh }: ComplaintDe
       
       {/* Assign Supervisor Button for Admin */}
       {role === 'admin' && complaint.status === 'Submitted' && !showAssignSupervisor && (
-        <div className="flex justify-end">
+        <div className="flex justify-end" id="assign-supervisor">
           <button
             onClick={() => setShowAssignSupervisor(true)}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
@@ -90,6 +95,7 @@ export function ComplaintDetailsPage({ role, complaint, onRefresh }: ComplaintDe
       {/* Supervisor Assignment Table */}
       {role === 'admin' && showAssignSupervisor && (
         <SupervisorAssignmentTable
+          title={complaint.title}
           pincode={complaint.pincode}
           complaintId={complaint.id}
           onAssignmentComplete={handleAssignmentComplete}

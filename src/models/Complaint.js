@@ -14,7 +14,7 @@ const complaintSchema = new Schema({
         type: String,
         required: true,
         trim: true
-    },
+    }, 
     location: {
         type: String
     },
@@ -28,7 +28,7 @@ const complaintSchema = new Schema({
         required: true,
         trim: true
     },
-    descImages: [{
+    images: [{
         type: String
     }],
     severity: {
@@ -37,14 +37,8 @@ const complaintSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ["Not Inspected", "Inspected", "Ongoing", "Completed", "Rejected"],
-        default: "Not Inspected"
-    },
-    priority: {
-        type: Number,
-        min: 1,
-        max: 3,
-        default: 3
+        enum: ["Submitted","Supervisor Assigned", "Inspected", "Ongoing", "Completed", "Rejected"],
+        default: "Submitted"
     },
     feedback: {
         type: mongoose.Schema.Types.ObjectId,
@@ -54,9 +48,18 @@ const complaintSchema = new Schema({
         type: Number,
         min: 0
     },
-    estimatedTime: {
-        type: Number,
-        min: 0
+    estimatedEndTime: {
+        type: Date,
+    },
+    statusMessages: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'StatusMessage'
+        }
+    ],
+    report: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Report'
     }
 }, { timestamps: true });
 

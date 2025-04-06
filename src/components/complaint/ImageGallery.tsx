@@ -102,7 +102,7 @@ export function ImageGallery({ images }: ImageGalleryProps) {
   return (
     <div className="bg-white rounded-lg shadow-md p-4 h-full">
       {/* Main Image */}
-      <div className="relative h-64 md:h-80 mb-4 rounded-lg overflow-hidden">
+      <div className="relative h-72 md:h-96 mb-4 rounded-lg overflow-hidden">
         {images.length > 0 ? (
           <>
             <Image 
@@ -117,13 +117,13 @@ export function ImageGallery({ images }: ImageGalleryProps) {
                   onClick={prevImage}
                   className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 rounded-full p-2 hover:bg-opacity-100 transition-all"
                 >
-                  <FaChevronLeft className="h-5 w-5" />
+                  <FaChevronLeft className="h-5 text-gray-600 w-5" />
                 </button>
                 <button 
                   onClick={nextImage}
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 rounded-full p-2 hover:bg-opacity-100 transition-all"
                 >
-                  <FaChevronRight className="h-5 w-5" />
+                  <FaChevronRight className="h-5 text-gray-600 w-5" />
                 </button>
               </>
             )}
@@ -137,12 +137,12 @@ export function ImageGallery({ images }: ImageGalleryProps) {
       
       {/* Thumbnails */}
       {images.length > 1 && (
-        <div className="grid grid-cols-5 gap-2 lg:gap-6">
+        <div className="flex justify-around">
           {images.map((image, index) => (
             <div 
               key={index}
               onClick={() => selectImage(index)}
-              className={`h-16 rounded-md overflow-hidden flex justify-center items-center cursor-pointer ${activeImageIndex === index ? 'ring-2 ring-blue-500' : ''}`}
+              className={`h-16 rounded-md w-full overflow-hidden flex justify-center items-center cursor-pointer ${activeImageIndex === index ? 'ring-2 ring-blue-500' : ''}`}
             >
               <Image 
                 src={image} 

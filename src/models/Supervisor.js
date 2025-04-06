@@ -37,6 +37,10 @@ const supervisorSchema = new Schema({
     trim: true,
     length: [6, 'Pincode must be exactly 6 digits']
   },
+  address: {
+    type: String,
+    trim: true
+  },
   role: {
     type: String,
     enum: ['user', 'admin', 'mayor', 'supervisor'],

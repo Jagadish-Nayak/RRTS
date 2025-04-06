@@ -4,53 +4,64 @@ import { FaSearch, FaSort, FaSortUp, FaSortDown, FaEye } from 'react-icons/fa';
 import { GiProgression } from 'react-icons/gi';
 import { useRouter } from 'next/navigation';
 import TrackStatusModal from '@/components/complaint/TrackStatusModal';
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
+import Loading from '@/components/Loading';
+import ReportPDFModal from '@/components/dashboard/ReportPDFModal';
+import { IoDocumentText } from 'react-icons/io5';
 
 // Define types for complaint data
 interface Complaint {
-  id: number;
-  userName: string;
+  id: string;
   title: string;
   submissionDate: string;
   pincode: string;
   location: string;
   severity: 'Low' | 'Medium' | 'High';
-  status: 'Not Assigned' | 'Inspected' | 'Ongoing' | 'Completed' | 'Rejected';
+  status: 'Not Assigned' | 'Supervisor Assigned' | 'Inspected' | 'Ongoing' | 'Completed' | 'Rejected';
   supervisorId: string;
   estimatedExpense: string;
+  report: string | null;
+  statusTimeline: {
+    status: string;
+    date: string;
+    completed: boolean;
+  }[];
 }
 
 // Generate dummy data
-const generateDummyData = (): Complaint[] => {
-  const statuses: Complaint['status'][] = ['Not Assigned', 'Inspected', 'Ongoing', 'Completed', 'Rejected'];
-  const severities: Complaint['severity'][] = ['Low', 'Medium', 'High'];
+// const generateDummyData = (): Complaint[] => {
+//   const statuses: Complaint['status'][] = ['Not Assigned', 'Inspected', 'Ongoing', 'Completed', 'Rejected'];
+//   const severities: Complaint['severity'][] = ['Low', 'Medium', 'High'];
   
-  return Array.from({ length: 30 }, (_, i) => {
-    const status = statuses[Math.floor(Math.random() * statuses.length)];
-    const isNotAssigned = status === 'Not Assigned';
+//   return Array.from({ length: 30 }, (_, i) => {
+//     const status = statuses[Math.floor(Math.random() * statuses.length)];
+//     const isNotAssigned = status === 'Not Assigned';
     
-    return {
-      id: i + 1,
-      userName: `User ${i + 1}`,
-      title: `Road damage complaint ${i + 1}`.length > 25 
-             ? `Road damage complaint ${i + 1}`.substring(0, 22) + '...' 
-             : `Road damage complaint ${i + 1}`,
-      submissionDate: new Date(2024, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString().split('T')[0],
-      pincode: `11${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`,
-      location: `Sector ${Math.floor(Math.random() * 100)}, Block ${String.fromCharCode(65 + Math.floor(Math.random() * 26))}, New Delhi`,
-      severity: severities[Math.floor(Math.random() * severities.length)],
-      status,
-      estimatedExpense: isNotAssigned ? '' : `₹${Math.floor(Math.random() * 10000).toString().padStart(5, '0')}`,
-      supervisorId: isNotAssigned ? '' : `SUP${Math.floor(Math.random() * 100).toString().padStart(3, '0')}`
-    };
-  });
-};
+//     return {
+//       id: i + 1,
+//       userName: `User ${i + 1}`,
+//       title: `Road damage complaint ${i + 1}`.length > 25 
+//              ? `Road damage complaint ${i + 1}`.substring(0, 22) + '...' 
+//              : `Road damage complaint ${i + 1}`,
+//       submissionDate: new Date(2024, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString().split('T')[0],
+//       pincode: `11${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`,
+//       location: `Sector ${Math.floor(Math.random() * 100)}, Block ${String.fromCharCode(65 + Math.floor(Math.random() * 26))}, New Delhi`,
+//       severity: severities[Math.floor(Math.random() * severities.length)],
+//       status,
+//       estimatedExpense: isNotAssigned ? '' : `₹${Math.floor(Math.random() * 10000).toString().padStart(5, '0')}`,
+//       supervisorId: isNotAssigned ? '' : `SUP${Math.floor(Math.random() * 100).toString().padStart(3, '0')}`
+//     };
+//   });
+// };
 
 export default function AdminComplaintsList() {
   const router = useRouter();
-  const [complaints, setComplaints] = useState<Complaint[]>([]);
+  const [complaint, setComplaint] = useState<Complaint[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
   const [severityFilter, setSeverityFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState('Not Assigned');
+  const [statusFilter, setStatusFilter] = useState('Completed');
   const [sortField, setSortField] = useState<'submissionDate'>('submissionDate');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [currentPage, setCurrentPage] = useState(1);
@@ -58,9 +69,30 @@ export default function AdminComplaintsList() {
   const [isTrackModalOpen, setIsTrackModalOpen] = useState(false);
   const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
   const [showAllRequests, setShowAllRequests] = useState(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [reportComplaintId, setReportComplaintId] = useState<string | null>(null);
 
   useEffect(() => {
-    setComplaints(generateDummyData());
+    const fetchComplaints = async () => {
+      try{
+        setIsLoading(true);
+        const token = localStorage.getItem('token');
+        const response = await axios.get('/api/admin/complaints', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const data = await response.data;
+        //console.log(data);
+        setComplaint(data.complaints);
+      }catch(error){
+        console.error(error);
+        toast.error('Error fetching complaints');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchComplaints();
   }, []);
 
   const handleSort = (field: 'submissionDate') => {
@@ -75,6 +107,7 @@ export default function AdminComplaintsList() {
   const getStatusColor = (status: Complaint['status']) => {
     switch (status) {
       case 'Not Assigned': return 'bg-gray-100 text-gray-800';
+      case 'Supervisor Assigned': return 'bg-orange-100 text-orange-800';
       case 'Inspected': return 'bg-blue-100 text-blue-800';
       case 'Ongoing': return 'bg-yellow-100 text-yellow-800';
       case 'Completed': return 'bg-green-100 text-green-800';
@@ -90,24 +123,20 @@ export default function AdminComplaintsList() {
     }
   };
 
-  const getShortLocation = (location: string) => {
-    return location.split(',')[0];
-  };
-
 //   const handleAssignSupervisor = (complaintId: number) => {
 //     // Implement supervisor assignment logic
 //     console.log('Assigning supervisor to complaint:', complaintId);
 //   };
 
-  const filteredComplaints = complaints
-    .filter(complaint => {
+  const filteredComplaints = complaint
+    .filter((complaint: Complaint) => {
       if (!showAllRequests && !statusFilter) return true;
       return statusFilter ? complaint.status === statusFilter : true;
     })
     .filter(complaint => {
       const matchesSearch = 
         complaint.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        complaint.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        // complaint.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         complaint.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
         complaint.pincode.includes(searchTerm) ||
         complaint.supervisorId.toLowerCase().includes(searchTerm.toLowerCase());
@@ -136,6 +165,7 @@ export default function AdminComplaintsList() {
   }
 
   return (
+    isLoading ? <Loading /> :
     <div className="w-full text-gray-600">
       <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
         {/* Header */}
@@ -144,11 +174,11 @@ export default function AdminComplaintsList() {
           <button
             onClick={() => {
               setShowAllRequests(!showAllRequests);
-              setStatusFilter(showAllRequests ? 'Not Assigned' : '');
+              setStatusFilter(showAllRequests ? 'Completed' : '');
             }}
             className="mt-2 sm:mt-0 inline-flex items-center px-4 py-2 bg-[#00abe4] text-white rounded-md hover:bg-[#029dd0] transition-colors"
           >
-            {showAllRequests ? 'Show New Requests' : 'Show All Requests'}
+            {showAllRequests ? 'Show Completed Requests' : 'Show All Requests'}
           </button>
         </div>
 
@@ -193,6 +223,7 @@ export default function AdminComplaintsList() {
             >
               <option value="">All</option>
               <option value="Not Assigned">Not Assigned</option>
+              <option value="Supervisor Assigned">Supervisor Assigned</option>
               <option value="Inspected">Inspected</option>
               <option value="Ongoing">Ongoing</option>
               <option value="Completed">Completed</option>
@@ -233,9 +264,6 @@ export default function AdminComplaintsList() {
                   Pincode
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Location
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Severity
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -267,9 +295,6 @@ export default function AdminComplaintsList() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {complaint.pincode}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {getShortLocation(complaint.location)}
-                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getSeverityColor(complaint.severity)}`}>
                       {complaint.severity}
@@ -295,7 +320,6 @@ export default function AdminComplaintsList() {
                       >
                         <FaEye size={18} />
                       </button>
-
                       <button
                         className="text-green-600 hover:text-blue-900"
                         title="Track Status"
@@ -305,6 +329,21 @@ export default function AdminComplaintsList() {
                         }}
                       >
                         <GiProgression size={18} />
+                      </button>
+                      <button
+                        className={` text-amber-600 hover:text-amber-900 ${
+                          !complaint.report ? 'opacity-50 cursor-not-allowed' : ''
+                        }`}
+                        title={complaint.report ? "Generate Report" : "No Report Available"}
+                        disabled={!complaint.report}
+                        onClick={() => {
+                          if (complaint.report) {
+                            setReportComplaintId(complaint.id);
+                            setIsReportModalOpen(true);
+                          }
+                        }}
+                      >
+                        <IoDocumentText size={18} />
                       </button>
                     </div>
                   </td>
@@ -364,19 +403,20 @@ export default function AdminComplaintsList() {
       {/* Track Status Modal */}
       {isTrackModalOpen && selectedComplaint && (
         <TrackStatusModal 
+          role="mayor"
           isOpen={isTrackModalOpen}
           onClose={() => setIsTrackModalOpen(false)}
           complaintId={selectedComplaint.id.toString()}
-          statusSteps={[
-            { status: 'Submitted', date: selectedComplaint.submissionDate, completed: true },
-            { status: 'Supervisor Assigned', date: '', completed: !!selectedComplaint.supervisorId },
-            { status: 'Inspected', date: '', completed: selectedComplaint.status === 'Inspected' },
-            { status: 'Ongoing', date: '', completed: selectedComplaint.status === 'Ongoing' },
-            { status: selectedComplaint.status === 'Rejected' ? 'Rejected' : 'Completed', 
-              date: '', 
-              completed: selectedComplaint.status === 'Completed' || selectedComplaint.status === 'Rejected' }
-          ]}
+          statusSteps={selectedComplaint.statusTimeline}
           currentStatus={selectedComplaint.status}
+        />
+      )}
+
+      {isReportModalOpen && reportComplaintId && (
+        <ReportPDFModal
+          isOpen={isReportModalOpen}
+          onClose={() => setIsReportModalOpen(false)}
+          complaintId={reportComplaintId}
         />
       )}
     </div>

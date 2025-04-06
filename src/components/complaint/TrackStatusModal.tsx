@@ -11,6 +11,7 @@ interface TrackStatusModalProps {
     completed: boolean;
   }[];
   currentStatus: string;
+  role: string;
   estimatedCompletionDate?: string;
 }
 
@@ -19,12 +20,13 @@ export default function TrackStatusModal({
   onClose, 
   complaintId,
   statusSteps,
+  role,
   currentStatus,
   estimatedCompletionDate
 }: TrackStatusModalProps) {
   
   if (!isOpen) return null;
-  
+  console.log(statusSteps);
   // Prevent click events inside the modal from closing it
   const preventPropagation = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -33,7 +35,7 @@ export default function TrackStatusModal({
   const handleViewDetails = () => {
     // Navigate to complaint details page
     if (complaintId) {
-      window.location.href = `/user/complaint/${complaintId}`;
+      window.location.href = `/${role}/complaint/${complaintId}`;
     }
   };
   

@@ -2,10 +2,11 @@ import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip
 
 interface BarChartProps {
   data: {
-    pincode: string;
-    'Total Complaints': number;
-    'Completed': number;
-    'Rejected': number;
+    _id: string;
+    allComplaints: number;
+    pending: number;
+    completed: number;
+    rejected: number;
   }[];
   title?: string;
 }
@@ -21,13 +22,14 @@ const BarChart = ({ data, title }: BarChartProps) => {
             margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="pincode" />
+            <XAxis dataKey="_id" />
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="Total Complaints" fill="#8884d8" />
-            <Bar dataKey="Completed" fill="#82ca9d" />
-            <Bar dataKey="Rejected" fill="#ff7c7c" />
+            {/* <Bar dataKey="allComplaints" fill="#8884d8" /> */}
+            <Bar dataKey="pending" fill="#8884d8" /> 
+            <Bar dataKey="completed" fill="#82ca9d" />
+            <Bar dataKey="rejected" fill="#ff7c7c" />
           </RechartsBarChart>
         </ResponsiveContainer>
       </div>

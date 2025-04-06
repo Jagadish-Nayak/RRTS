@@ -1,54 +1,61 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { FaSearch, FaSort, FaSortUp, FaSortDown, FaEye } from 'react-icons/fa';
+import { FaSearch, FaSort, FaSortUp, FaSortDown, FaEye, FaUser } from 'react-icons/fa';
 import { GiProgression } from 'react-icons/gi';
 import { useRouter } from 'next/navigation';
 import TrackStatusModal from '@/components/complaint/TrackStatusModal';
-
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
+import Loading from '@/components/Loading';
 // Define types for complaint data
 interface Complaint {
-  id: number;
-  userName: string;
+  id: string;
   title: string;
   submissionDate: string;
   pincode: string;
   location: string;
   severity: 'Low' | 'Medium' | 'High';
-  status: 'Not Assigned' | 'Inspected' | 'Ongoing' | 'Completed' | 'Rejected';
+  status:  'Not Assigned' | 'Supervisor Assigned' | 'Inspected' | 'Ongoing' | 'Completed' | 'Rejected';
   supervisorId: string;
   estimatedExpense: string;
+  statusTimeline: {
+    status: string;
+    date: string;
+    completed: boolean;
+  }[];
 }
 
 // Generate dummy data
-const generateDummyData = (): Complaint[] => {
-  const statuses: Complaint['status'][] = ['Not Assigned', 'Inspected', 'Ongoing', 'Completed', 'Rejected'];
-  const severities: Complaint['severity'][] = ['Low', 'Medium', 'High'];
+// const generateDummyData = (): Complaint[] => {
+//   const statuses: Complaint['status'][] = ['Not Assigned', 'Inspected', 'Ongoing', 'Completed', 'Rejected'];
+//   const severities: Complaint['severity'][] = ['Low', 'Medium', 'High'];
   
-  return Array.from({ length: 30 }, (_, i) => {
-    const status = statuses[Math.floor(Math.random() * statuses.length)];
-    const isNotAssigned = status === 'Not Assigned';
+//   return Array.from({ length: 30 }, (_, i) => {
+//     const status = statuses[Math.floor(Math.random() * statuses.length)];
+//     const isNotAssigned = status === 'Not Assigned';
     
-    return {
-      id: i + 1,
-      userName: `User ${i + 1}`,
-      title: `Road damage complaint ${i + 1}`.length > 25 
-             ? `Road damage complaint ${i + 1}`.substring(0, 22) + '...' 
-             : `Road damage complaint ${i + 1}`,
-      submissionDate: new Date(2024, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString().split('T')[0],
-      pincode: `11${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`,
-      location: `Sector ${Math.floor(Math.random() * 100)}, Block ${String.fromCharCode(65 + Math.floor(Math.random() * 26))}, New Delhi`,
-      severity: severities[Math.floor(Math.random() * severities.length)],
-      status,
-      estimatedExpense: isNotAssigned ? '' : `₹${Math.floor(Math.random() * 10000).toString().padStart(5, '0')}`,
-      supervisorId: isNotAssigned ? '' : `SUP${Math.floor(Math.random() * 100).toString().padStart(3, '0')}`
-    };
-  });
-};
+//     return {
+//       id: i + 1,
+//       userName: `User ${i + 1}`,
+//       title: `Road damage complaint ${i + 1}`.length > 25 
+//              ? `Road damage complaint ${i + 1}`.substring(0, 22) + '...' 
+//              : `Road damage complaint ${i + 1}`,
+//       submissionDate: new Date(2024, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString().split('T')[0],
+//       pincode: `11${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`,
+//       location: `Sector ${Math.floor(Math.random() * 100)}, Block ${String.fromCharCode(65 + Math.floor(Math.random() * 26))}, New Delhi`,
+//       severity: severities[Math.floor(Math.random() * severities.length)],
+//       status,
+//       estimatedExpense: isNotAssigned ? '' : `₹${Math.floor(Math.random() * 10000).toString().padStart(5, '0')}`,
+//       supervisorId: isNotAssigned ? '' : `SUP${Math.floor(Math.random() * 100).toString().padStart(3, '0')}`
+//     };
+//   });
+// };
 
 export default function AdminComplaintsList() {
   const router = useRouter();
-  const [complaints, setComplaints] = useState<Complaint[]>([]);
+  const [complaint, setComplaint] = useState<Complaint[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
   const [severityFilter, setSeverityFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('Not Assigned');
   const [sortField, setSortField] = useState<'submissionDate'>('submissionDate');
@@ -58,9 +65,28 @@ export default function AdminComplaintsList() {
   const [isTrackModalOpen, setIsTrackModalOpen] = useState(false);
   const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
   const [showAllRequests, setShowAllRequests] = useState(false);
-
   useEffect(() => {
-    setComplaints(generateDummyData());
+    const fetchComplaints = async () => {
+      try{
+        setIsLoading(true);
+        const token = localStorage.getItem('token');
+        const response = await axios.get('/api/admin/complaints', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const data = await response.data;
+        //console.log(data);
+        setComplaint(data.complaints);
+      }catch(error){
+        //console.log(error);
+        toast.error('Error fetching complaints');
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchComplaints();
   }, []);
 
   const handleSort = (field: 'submissionDate') => {
@@ -75,6 +101,7 @@ export default function AdminComplaintsList() {
   const getStatusColor = (status: Complaint['status']) => {
     switch (status) {
       case 'Not Assigned': return 'bg-gray-100 text-gray-800';
+      case 'Supervisor Assigned': return 'bg-orange-100 text-orange-800';
       case 'Inspected': return 'bg-blue-100 text-blue-800';
       case 'Ongoing': return 'bg-yellow-100 text-yellow-800';
       case 'Completed': return 'bg-green-100 text-green-800';
@@ -99,15 +126,15 @@ export default function AdminComplaintsList() {
 //     console.log('Assigning supervisor to complaint:', complaintId);
 //   };
 
-  const filteredComplaints = complaints
-    .filter(complaint => {
+  const filteredComplaints = complaint
+    .filter((complaint: Complaint) => {
       if (!showAllRequests && !statusFilter) return true;
       return statusFilter ? complaint.status === statusFilter : true;
     })
     .filter(complaint => {
       const matchesSearch = 
         complaint.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        complaint.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        // complaint.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         complaint.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
         complaint.pincode.includes(searchTerm) ||
         complaint.supervisorId.toLowerCase().includes(searchTerm.toLowerCase());
@@ -136,6 +163,7 @@ export default function AdminComplaintsList() {
   }
 
   return (
+    isLoading ? <Loading /> :
     <div className="w-full text-gray-600">
       <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
         {/* Header */}
@@ -295,7 +323,14 @@ export default function AdminComplaintsList() {
                       >
                         <FaEye size={18} />
                       </button>
-
+                      <button 
+                        className="text-amber-600 disabled:text-gray-400 disabled:cursor-not-allowed hover:text-amber-900"
+                        title="Assign Supervisor"
+                        disabled={complaint.status !== "Not Assigned"}
+                        onClick={() => router.push(`/admin/complaint/${complaint.id}#assign-supervisor`)}
+                      >
+                        <FaUser size={18} />
+                      </button>
                       <button
                         className="text-green-600 hover:text-blue-900"
                         title="Track Status"
@@ -365,17 +400,10 @@ export default function AdminComplaintsList() {
       {isTrackModalOpen && selectedComplaint && (
         <TrackStatusModal 
           isOpen={isTrackModalOpen}
+          role="admin"
           onClose={() => setIsTrackModalOpen(false)}
           complaintId={selectedComplaint.id.toString()}
-          statusSteps={[
-            { status: 'Submitted', date: selectedComplaint.submissionDate, completed: true },
-            { status: 'Supervisor Assigned', date: '', completed: !!selectedComplaint.supervisorId },
-            { status: 'Inspected', date: '', completed: selectedComplaint.status === 'Inspected' },
-            { status: 'Ongoing', date: '', completed: selectedComplaint.status === 'Ongoing' },
-            { status: selectedComplaint.status === 'Rejected' ? 'Rejected' : 'Completed', 
-              date: '', 
-              completed: selectedComplaint.status === 'Completed' || selectedComplaint.status === 'Rejected' }
-          ]}
+          statusSteps={selectedComplaint.statusTimeline}
           currentStatus={selectedComplaint.status}
         />
       )}

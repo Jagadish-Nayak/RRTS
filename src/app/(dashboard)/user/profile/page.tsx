@@ -1,5 +1,4 @@
 'use client';
-
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import axios from 'axios';
@@ -13,7 +12,7 @@ import {
 } from 'react-icons/fa';
 import StatCard from '@/components/dashboard/StatCard';
 import { MdFeedback, MdVerified } from 'react-icons/md';
-
+import Loading from '@/components/Loading';
 
 interface UserProfile {
   firstName: string;
@@ -28,9 +27,13 @@ interface UserProfile {
   avatar?: string;
 }
 
-export default function ProfilePage() {
-  let complaints,feedbacks; 
+export default function ProfilePage() { 
+  const [name, setName] = useState('');
+  
+  const [verified, setVerified] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [complaints, setComplaints] = useState<number>(0);
+  const [feedbacks, setFeedbacks] = useState<number>(0);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [formData, setFormData] = useState<UserProfile | null>(null);
   const [errors, setErrors] = useState({
@@ -42,10 +45,8 @@ export default function ProfilePage() {
     pincode: '',
     address: ''
   });
-
   const fetchUserProfile = useCallback(async (token: string) => {
     try {
-      toast.loading('Loading...');
       const response = await axios.get('/api/user/profile', {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -55,10 +56,12 @@ export default function ProfilePage() {
       userData.firstName = nameParts[0] || '';
       userData.lastName = nameParts.slice(1).join(' ') || '';
       userData.dob = new Date(userData.dob).toISOString().split('T')[0];
-  
+      setComplaints(userData.complaints.length);
+      setFeedbacks(userData.feedbacks.length);
       setUserProfile(userData);
       setFormData(userData);
-      toast.dismiss();
+      setName(userData.firstName + ' ' + userData.lastName);
+      setVerified(userData.isVerified);
     } catch (error) {
       console.error('Error fetching profile data:', error);
       toast.error('Failed to fetch profile data');
@@ -142,7 +145,7 @@ const [token, setToken] = useState<string | null>(null);
     if (!formData?.pincode) {
       newErrors.pincode = 'Pincode is required';
       valid = false;
-    } else if (formData.pincode.length !== 6) {
+    } else if (formData.pincode.toString().length !== 6) {
       newErrors.pincode = 'Pincode must be 6 digits';
       valid = false;
     }
@@ -155,7 +158,7 @@ const [token, setToken] = useState<string | null>(null);
     setErrors(newErrors);
     return valid;
   };
-
+  
   const handleUpdate = async () => {
     if (!validateForm()) return;
     
@@ -170,6 +173,10 @@ const [token, setToken] = useState<string | null>(null);
         },
       });
       setUserProfile(response.data);
+      setName(response.data.username);
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      user.username = response.data.username;
+      localStorage.setItem('user', JSON.stringify(user));
       setIsEditing(false);
       toast.success('Profile updated successfully');
     } catch (error: unknown) {
@@ -197,7 +204,7 @@ const [token, setToken] = useState<string | null>(null);
     toast.success('Verification email sent');
   };
 
-  if (!userProfile || !formData) return <div>Loading...</div>;
+  if (!userProfile || !formData) return <Loading />;
 
   return (
     <div className="h-max md:max-h-screen bg-gray-50 text-gray-700">
@@ -229,7 +236,7 @@ const [token, setToken] = useState<string | null>(null);
                     </div>
 
                     {/* Verified Badge */}
-                    {userProfile.isVerified && (
+                    {verified && (
                         <div className="absolute bottom-2 right-2 bg-blue-600 border-2 border-white rounded-full p-1 shadow-md">
                         <MdVerified className="text-white" size={22} />
                         </div>
@@ -238,11 +245,11 @@ const [token, setToken] = useState<string | null>(null);
                     
                     {/* User Name */}
                     <h3 className="mt-4 text-xl font-semibold text-gray-800">
-                    {userProfile.firstName} {userProfile.lastName}
+                    {name}
                     </h3>
                     
                     {/* Verify Button */}
-                    {!userProfile.isVerified && (
+                    {!verified && (
                     <button
                         onClick={handleVerify}
                         className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors shadow-md"
@@ -256,7 +263,7 @@ const [token, setToken] = useState<string | null>(null);
                     {/* Total Complaints Card */}
                     <StatCard 
                         title="Total Complaints" 
-                        value={complaints?complaints:0} 
+                        value={complaints} 
                         icon={<FaWpforms  size={24} />} 
                         bgColor="bg-green-500"
                     />
@@ -264,7 +271,7 @@ const [token, setToken] = useState<string | null>(null);
                     {/* Total Feedbacks Card */}
                     <StatCard 
                         title="Total Feedbacks" 
-                        value={feedbacks?feedbacks:0} 
+                        value={feedbacks} 
                         icon={<MdFeedback  size={24} />} 
                         bgColor="bg-purple-500"
                     />
@@ -401,7 +408,7 @@ const [token, setToken] = useState<string | null>(null);
                   <div className="w-1/2">
                     <label className="block text-gray-700 font-medium mb-2">Pincode</label>
                     <input
-                      type="text"
+                      type="number"
                       name="pincode"
                       value={formData.pincode}
                       onChange={handleChange}

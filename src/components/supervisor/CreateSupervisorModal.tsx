@@ -5,12 +5,12 @@ import toast from 'react-hot-toast';
 
 interface CreateSupervisorModalProps {
   isOpen: boolean;
-  onClose: () => void;
-  onSuccess: () => void;    
+  onClose: () => void;    
+  onSuccess: () => void;
   token: string;
 }
 
-export default function CreateSupervisorModal({ isOpen, onClose, onSuccess, token }: CreateSupervisorModalProps) {
+export default function CreateSupervisorModal({ isOpen, onSuccess, onClose, token }: CreateSupervisorModalProps) {
   const [formData, setFormData] = useState({
     supervisorId: '',
     fullName: '',

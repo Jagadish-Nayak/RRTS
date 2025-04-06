@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FaSearch, FaSort, FaSortUp, FaSortDown, FaEye, FaUserTie } from 'react-icons/fa';
-
-
+import { FaSearch, FaSort, FaSortUp, FaSortDown, FaUserTie } from 'react-icons/fa';
+import { toast } from 'react-hot-toast';
+import axios from 'axios';
+import Loading from '@/components/Loading';
 // Define types for supervisor data
+
 interface Supervisor {
   id: string;
   name: string;
@@ -13,22 +15,13 @@ interface Supervisor {
   tasksCompleted: number;
   pendingTasks: number;
   rating: number;
+  age: number;
 }
 
-const generateDummyData = (): Supervisor[] => {
-  return Array.from({ length: 30 }, (_, i) => ({
-    id: `SUP${(i + 1).toString().padStart(3, '0')}`,
-    name: `John Doe ${i + 1}`,
-    contact: `+91 ${Math.floor(Math.random() * 9000000000) + 1000000000}`,
-    pincode: `${110000 + Math.floor(Math.random() * 100)}`,
-    tasksCompleted: Math.floor(Math.random() * 100),
-    pendingTasks: Math.floor(Math.random() * 20),
-    rating: Number((Math.random() * 3 + 2).toFixed(1)) // Random rating between 2.0 and 5.0
-  }));
-};
 
 export default function SupervisorsList() {
   const [supervisors, setSupervisors] = useState<Supervisor[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
@@ -36,14 +29,32 @@ export default function SupervisorsList() {
     key: keyof Supervisor;
     direction: 'asc' | 'desc';
   }>({ key: 'id', direction: 'asc' });
-  // const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [token, setToken] = useState<string | null>(null);
-  console.log(token);
+
+  const fetchSupervisors = async (token: string | null) => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get('/api/admin/supervisors/getall', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const data = await response.data;
+      //console.log(data);
+      setSupervisors(data.supervisors);
+      setIsLoading(false);
+    } catch (error) {
+      toast.error('Error fetching supervisors');
+      console.error(error);
+      setIsLoading(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   // Initialize dummy data
   useEffect(() => {
-    setSupervisors(generateDummyData());
     if (typeof window !== "undefined") {
-      setToken(window.localStorage.getItem('token'));
+      const localToken = window.localStorage.getItem('token');
+      fetchSupervisors(localToken);
     }
   }, []);
 
@@ -61,8 +72,8 @@ export default function SupervisorsList() {
       return (
         supervisor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         supervisor.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        supervisor.contact.includes(searchTerm) ||
-        supervisor.pincode.includes(searchTerm)
+        supervisor.contact.toString().includes(searchTerm) ||
+        supervisor.pincode.toString().includes(searchTerm)
       );
     })
     .sort((a, b) => {
@@ -87,10 +98,11 @@ export default function SupervisorsList() {
   // Add this function to handle successful supervisor creation
   // const handleSupervisorCreated = () => {
   //   // Refresh the supervisors list
-  //   setSupervisors(generateDummyData()); // Replace with actual API call
+  //   //setSupervisors(generateDummyData()); // Replace with actual API call
   // };
 
   return (
+    isLoading ? <Loading /> :
     <div className="w-full text-gray-600">
       <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
         {/* Header */}
@@ -99,13 +111,6 @@ export default function SupervisorsList() {
             <FaUserTie className="text-blue-500 mr-2" size={24} />
             <h1 className="text-2xl font-bold text-gray-800">Supervisors List</h1>
           </div>
-          {/* <button 
-            onClick={() => setIsCreateModalOpen(true)}
-            className="mt-2 sm:mt-0 inline-flex items-center px-4 py-2 bg-[#00ABE4] text-white rounded-md hover:bg-[#029dd0] transition-colors"
-          >
-            <FaPlus className="mr-2" />
-            Add New Supervisor
-          </button> */}
         </div>
 
         {/* Search Bar */}
@@ -132,10 +137,11 @@ export default function SupervisorsList() {
                 {[
                   { key: 'id', label: 'Supervisor ID' },
                   { key: 'name', label: 'Name' },
+                  { key: 'age', label: 'Age' },
                   { key: 'contact', label: 'Contact' },
                   { key: 'pincode', label: 'Pincode' },
-                  { key: 'tasksCompleted', label: 'Tasks Completed' },
-                  { key: 'pendingTasks', label: 'Pending Tasks' },
+                  { key: 'tasksCompleted', label: 'Completed\n Tasks' },
+                  { key: 'pendingTasks', label: 'Pending\n Tasks' },
                   { key: 'rating', label: 'Rating' },
                 ].map(({ key, label }) => (
                   <th
@@ -154,9 +160,6 @@ export default function SupervisorsList() {
                     </div>
                   </th>
                 ))}
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -164,6 +167,7 @@ export default function SupervisorsList() {
                 <tr key={supervisor.id} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-blue-50 transition-colors duration-150`}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{supervisor.id}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{supervisor.name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{supervisor.age}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{supervisor.contact}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{supervisor.pincode}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{supervisor.tasksCompleted}</td>
@@ -178,19 +182,6 @@ export default function SupervisorsList() {
                         {supervisor.rating}
                       </span>
                       <span className="text-yellow-400 ml-1">★</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <div className="flex space-x-6">
-                      <button className="text-blue-600 hover:text-blue-900" title="View Details">
-                        <FaEye size={18} />
-                      </button>
-                      {/* <button className="text-red-600 hover:text-red-900" title="Delete" onClick={() => {
-                        setIsDeleteModalOpen(true);
-                        setSelectedSupervisorId(supervisor.id);
-                      }}>
-                        <FaTrash size={18} />
-                      </button> */}
                     </div>
                   </td>
                 </tr>
@@ -239,18 +230,6 @@ export default function SupervisorsList() {
       </div>
 
       {/* Add the CreateSupervisorModal */}
-      {/* <CreateSupervisorModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        onSuccess={handleSupervisorCreated}
-        token={token || ''}
-      /> */}
-      {/* <SupervisorDeletionModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        supervisorId={selectedSupervisorId || ''}
-        token={token || ''}
-      /> */}
     </div>
   );
 }

@@ -6,6 +6,7 @@ interface Announcement {
   content: string;
   date: string;
   bgColor: string;
+  complaint: string;
 }
 
 interface AnnouncementsProps {
@@ -28,7 +29,8 @@ const Announcements = ({ announcements, title = 'Announcements' }: Announcements
               <h4 className="font-medium text-gray-800">{announcement.title}</h4>
               <span className="text-xs text-gray-500">{announcement.date}</span>
             </div>
-            <p className="text-sm mt-1 text-gray-600">{announcement.content}</p>
+            <p className="text-xs mt-[2px] text-gray-600">{announcement.complaint}</p>
+            <p className="text-sm mt-[2px] text-gray-600">{announcement.content}</p>
           </div>
         ))}
       </div>

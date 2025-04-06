@@ -4,7 +4,7 @@ import { FaSearch } from 'react-icons/fa';
 interface Supervisor {
   id: number;
   name: string;
-  contactNumber: string;
+  contactNumber: number;
 }
 
 interface SupervisorListProps {
@@ -18,11 +18,11 @@ const SupervisorList = ({ supervisors, title = 'Supervisors List' }: SupervisorL
   // Filter supervisors based on search term
   const filteredSupervisors = supervisors.filter(supervisor => 
     supervisor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    supervisor.contactNumber.includes(searchTerm)
+    supervisor.contactNumber.toString().includes(searchTerm)
   );
   
   return (
-    <div className="bg-white p-4 rounded-lg shadow-md h-full">
+    <div className="bg-white p-4 px-1.5 rounded-lg text-gray-700 shadow-md h-full">
       <h3 className="text-lg font-medium mb-4 text-gray-700">{title}</h3>
       
       {/* Search Box */}
@@ -65,7 +65,7 @@ const SupervisorList = ({ supervisors, title = 'Supervisors List' }: SupervisorL
                   } hover:bg-blue-100 transition-colors duration-150 ease-in-out cursor-pointer`}
                 >
                   <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {index + 1}
+                    {supervisor.id}
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">{supervisor.name}</div>

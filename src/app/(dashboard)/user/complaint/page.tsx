@@ -1,9 +1,15 @@
 'use client';
 import { useState, useRef, ChangeEvent, FormEvent } from 'react';
 import Image from 'next/image';
+import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
+
+
 
 export default function ComplaintForm() {
   // Form state
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -16,7 +22,7 @@ export default function ComplaintForm() {
   const [images, setImages] = useState<File[]>([]);
   const [imagePreview, setImagePreview] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
+  const [isSubmitting, setIsSubmitting] = useState(false);
   // Validation state
   const [errors, setErrors] = useState({
     title: '',
@@ -164,29 +170,93 @@ export default function ComplaintForm() {
   };
   
   // Handle form submission
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
+  // const handleSubmit = (e: FormEvent) => {
+  //   e.preventDefault();
     
+  //   if (validateForm()) {
+  //     // Gather all form data with images
+  //     const completeData = {
+  //       ...formData,
+  //       images
+  //     };
+      
+  //     // Log form data to console
+  //     console.log('Complaint submitted:', completeData);
+      
+  //     // Reset form
+  //     setFormData({
+  //       title: '',
+  //       description: '',
+  //       location: '',
+  //       pincode: '',
+  //       severity: 'Low',
+  //     });
+  //     setImages([]);
+  //     setImagePreview([]);
+  //   }
+  // };
+  const router = useRouter();
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
     if (validateForm()) {
-      // Gather all form data with images
-      const completeData = {
-        ...formData,
-        images
-      };
+      setIsSubmitting(true);
+      try {
+        // Create a submission object (excluding confirmPassword)
+        const submissionData = new FormData();
+        submissionData.append('title', formData.title);
+        submissionData.append('description', formData.description);
+        submissionData.append('location', formData.location);
+        submissionData.append('pincode', formData.pincode);
+        submissionData.append('severity', formData.severity);
+        
+        // Append each image
+        images.forEach((image) => {
+          submissionData.append('images', image);
+        });
+
+        let token;
+        if (typeof window !== "undefined") {
+            token = window.localStorage.getItem('token');
+        }
+        // Call the API endpoint
+        const response = await axios.post('/api/complaint/create', submissionData,{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }}
+        );
+        
+        if (response.data.success) {
+          // Show success toast
+          toast.success('Complaint created successfully!');
+          // Reset form
+          setFormData({
+            title: '',
+            description: '',
+            location: '',
+            pincode: '',
+            severity: '',
+          });
+          setImages([]);
+          setImagePreview([]);
+          // Redirect to login page after a short delay
+          setTimeout(() => {
+            router.push('/user/list/complaints');
+          }, 2000);
+        }
+      } catch (error: unknown) {
+        console.error('Complaint creation error:', error);
       
-      // Log form data to console
-      console.log('Complaint submitted:', completeData);
+        let errorMessage = 'Something went wrong. Please try again.';
       
-      // Reset form
-      setFormData({
-        title: '',
-        description: '',
-        location: '',
-        pincode: '',
-        severity: 'Low',
-      });
-      setImages([]);
-      setImagePreview([]);
+        // Type guard to check if error is an Axios error
+        if (axios.isAxiosError(error) && error.response?.data?.message) {
+          errorMessage = error.response.data.message;
+        }
+        toast.error(errorMessage);
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
   
@@ -357,8 +427,9 @@ export default function ComplaintForm() {
             <button
               type="submit"
               className="w-full cursor-pointer py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+              disabled={isSubmitting}
             >
-              Submit Complaint
+              {isSubmitting ? 'Submitting...' : 'Submit Complaint'}
             </button>
           </div>
         </form>
