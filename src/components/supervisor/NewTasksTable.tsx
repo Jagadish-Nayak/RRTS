@@ -47,7 +47,7 @@ export function NewTasksTable({ tasks, onSuccess }: NewTasksTableProps) {
                 {['User Name', 'Phone', 'Title', 'Location', 'Severity', 'Actions'].map(header => (
                   <th
                     key={header}
-                    className="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
                     {header}
                   </th>
@@ -57,24 +57,24 @@ export function NewTasksTable({ tasks, onSuccess }: NewTasksTableProps) {
             <tbody className="bg-white divide-y divide-gray-200">
               {tasks.map((task, index) => (
                 <tr key={task.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                  <td className="px-5 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {task.userName}
                   </td>
-                  <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                     {task.phone}
                   </td>
-                  <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
                     {task.title}
                   </td>
-                  <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                     {task.location}
                   </td>
-                  <td className="px-5 py-4 whitespace-nowrap">
+                  <td className="px-4 py-4 whitespace-nowrap">
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getSeverityColor(task.severity)}`}>
                       {task.severity}
                     </span>
                   </td>
-                  <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                     <div className="flex space-x-3">
                       <button
                         onClick={() => {
