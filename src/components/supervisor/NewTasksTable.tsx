@@ -120,7 +120,7 @@ export function NewTasksTable({ tasks, onSuccess }: NewTasksTableProps) {
             onClose={() => setShowStatusModal(false)}
             complaintId={selectedTask.id}
             complaintSeverity={selectedTask.severity}
-            currentStatus="Not Inspected"
+            currentStatus="Supervisor Assigned"
             onSuccess={onSuccess}
           />
         </>

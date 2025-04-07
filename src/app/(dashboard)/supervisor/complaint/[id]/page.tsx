@@ -72,7 +72,7 @@ export default function ComplaintDetails() {
         });
       }}
       const lastStatus = statusTimeline[statusTimeline.length - 1].status;
-      if (lastStatus !== "Completed") {
+      if (lastStatus !== "Completed" && lastStatus !== "Rejected") {
         statusTimeline.push({
           status: "Completed",
           date: data.complaint.estimatedCompletionDate,

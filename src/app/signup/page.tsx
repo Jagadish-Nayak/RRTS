@@ -274,7 +274,7 @@ export default function Signup() {
       {/* Left side - Illustration (hidden on mobile) */}
       <div className="hidden md:flex md:w-1/2 bg-[#89CFF3] items-center justify-center">
         <div className="p-12 max-w-md">
-          <h1 className="text-4xl font-bold text-white mb-6">Join NEXTGEN</h1>
+          <h1 className="text-4xl font-bold text-white mb-6">Join FixMyRoad</h1>
           <p className="text-white text-lg mb-8">
             Create your account to access our road repair tracking and management platform.
           </p>
@@ -297,7 +297,7 @@ export default function Signup() {
             <Link href="/" className='flex items-center gap-1.5'>
               <Image 
                 src="/logo.png" 
-                alt="Road Repair Tracker Logo" 
+                alt="FixMyRoad Logo" 
                 width={50} 
                 height={50} 
                 className="cursor-pointer"

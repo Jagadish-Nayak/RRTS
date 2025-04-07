@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "../globals.css";
 
 export const metadata: Metadata = {
-  title: "Login - Road Repair Tracker",
-  description: "Login to your Road Repair Tracker account",
+  title: "Login - FixMyRoad",
+  description: "Login to your FixMyRoad account",
 };
 
 export default function LoginLayout({

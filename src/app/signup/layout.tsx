@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "../globals.css";
 
 export const metadata: Metadata = {
-  title: "Sign Up - Road Repair Tracker",
-  description: "Create a new account for Road Repair Tracker",
+  title: "Sign Up - FixMyRoad",
+  description: "Create a new account for FixMyRoad",
 };
 
 export default function SignupLayout({
