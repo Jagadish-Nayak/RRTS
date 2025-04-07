@@ -69,7 +69,7 @@ export default function ReportPDFModal({ isOpen, onClose, complaintId }: ReportP
       if (response.data.success) {
         console.log(response.data.report);
         setReportData({
-            id: response.data.report.id,
+            id: response.data.report._id,
             createdAt: response.data.report.createdAt,
             updatedAt: response.data.report.updatedAt,
             totalDaysInvested: response.data.report.totalDaysInvested,
