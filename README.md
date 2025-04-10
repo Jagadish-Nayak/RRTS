@@ -96,7 +96,7 @@ A comprehensive web application for managing complaints, reports, and user feedb
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/Jagadish-Nayak/rrts.git
+git clone https://github.com/Jagadish-Nayak/RRTS.git
 cd my-app
 ```
 
