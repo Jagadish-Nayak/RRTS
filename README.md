@@ -216,14 +216,4 @@ yarn start
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 📞 Support
-
-For support, please open an issue in the GitHub repository or contact the maintainers.
-
----
-
 Built with ❤️ using Next.js and React
