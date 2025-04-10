@@ -1,36 +1,229 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Complaint Management System
 
-## Getting Started
+A comprehensive web application for managing complaints, reports, and user feedback with a modern dashboard interface. Built with Next.js, React, and TypeScript.
 
-First, run the development server:
+## 🚀 Features & Functionalities
 
+### User Management
+- Secure authentication system with JWT
+- User roles and permissions
+- Profile management
+- Password hashing and security
+
+### Complaint Management
+- Complaint submission and tracking
+- Status updates and notifications
+- Supervisor assignment system
+- Complaint categorization and prioritization
+
+### Report Generation
+- PDF report creation and export
+- Customizable report templates
+- Data visualization and analytics
+- Report history and archiving
+
+### Supervisor Management
+- Task delegation system
+- Performance tracking
+- Workload management
+- Team coordination
+
+### Feedback System
+- User feedback collection
+- Feedback analysis dashboard
+- Status messaging system
+- Response tracking
+
+### Media Handling
+- Image upload and storage (Cloudinary)
+- Document management
+- File processing and validation
+- Media preview and download
+
+### UI/UX Features
+- Responsive design
+- Dark/light theme support
+- Animated transitions
+- Toast notifications
+- Interactive calendar
+- Data visualization charts
+- Loading states and spinners
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **Framework**: Next.js 15.2.2
+- **UI Library**: React 19.0.0
+- **Language**: TypeScript
+- **Styling**: 
+  - Tailwind CSS
+  - Framer Motion (animations)
+  - Headless UI (accessible components)
+- **Charts**: Recharts
+- **PDF Handling**: @react-pdf/renderer, pdf-lib
+- **Icons**: React Icons, Heroicons
+- **Notifications**: React Hot Toast
+- **Calendar**: React Calendar
+
+### Backend
+- **Runtime**: Node.js
+- **Database**: MongoDB with Mongoose
+- **Authentication**: JWT, Bcryptjs
+- **Email**: Nodemailer
+- **File Storage**: Cloudinary
+- **HTTP Client**: Axios
+
+### Development Tools
+- TypeScript
+- ESLint
+- PostCSS
+- Tailwind CSS
+
+## 📸 Screenshots
+
+
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js (v18 or higher)
+- MongoDB
+- npm or yarn
+- Cloudinary account
+- Email service provider
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone [your-repository-url]
+cd my-app
+```
+
+2. Install dependencies:
+```bash
+npm install
+# or
+yarn install
+```
+
+3. Set up environment variables:
+Create a `.env` file in the root directory with the following variables:
+
+```env
+# Database
+MONGODB_URI=your_mongodb_connection_string
+
+# Authentication
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRES_IN=7d
+
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+
+# Email
+EMAIL_SERVICE=your_email_service
+EMAIL_USER=your_email_user
+EMAIL_PASSWORD=your_email_password
+EMAIL_FROM=your_email_from_address
+
+# Application
+NEXT_PUBLIC_API_URL=http://localhost:3000
+NODE_ENV=development
+```
+
+4. Run the development server:
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application will be available at `http://localhost:3000`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📁 Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+my-app/
+├── src/
+│   ├── app/              # Next.js app directory
+│   │   ├── api/         # API routes
+│   │   ├── (dashboard)/ # Dashboard pages
+│   │   ├── login/       # Login page
+│   │   └── signup/      # Signup page
+│   ├── components/      # Reusable components
+│   ├── config/          # Configuration files
+│   ├── data/            # Static data
+│   ├── models/          # Database models
+│   │   ├── User.js
+│   │   ├── Complaint.js
+│   │   ├── Report.js
+│   │   ├── Supervisor.js
+│   │   ├── Feedback.js
+│   │   └── StatusMessage.js
+│   └── utils/           # Utility functions
+├── public/              # Static assets
+└── ...config files
+```
 
-## Learn More
+## 🚀 Deployment
 
-To learn more about Next.js, take a look at the following resources:
+### Production Build
+```bash
+npm run build
+# or
+yarn build
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Start Production Server
+```bash
+npm start
+# or
+yarn start
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Deployment Options
+1. **Vercel** (Recommended)
+   - Automatic deployments
+   - Serverless functions
+   - Easy environment variable management
 
-## Deploy on Vercel
+2. **Docker**
+   - Containerized deployment
+   - Consistent environments
+   - Easy scaling
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. **Traditional Server**
+   - Node.js server
+   - PM2 for process management
+   - Nginx for reverse proxy
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🔧 Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm run test` - Run tests (if configured)
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 📞 Support
+
+For support, please open an issue in the GitHub repository or contact the maintainers.
+
+---
+
+Built with ❤️ using Next.js and React
